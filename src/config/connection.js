@@ -10,15 +10,14 @@ async function putKeyVaultSecretInEnvVar() {
     console.log('secretName: ',secretName);
     console.log('keyVaultName: ',keyVaultName);
     console.log('openaiAPIKey: ',openaiAPIKey);
-    console.log(`
-    const openaiAPIKey = process.env.KEY_VAULT_SECRET_NAME_OPENAI_API_KEY
-    const secretName = process.env.KEY_VAULT_SECRET_NAME_DATABASE_URL;
-    const keyVaultName = process.env.KEY_VAULT_NAME;`)
     
     if (!secretName || !keyVaultName || !openaiAPIKey) throw Error("getSecret: Required params missing");
 
     connectionString = await getSecret(secretName, keyVaultName);
     openaiAPIKeyString = await getSecret(openaiAPIKey, keyVaultName);
+
+    console.log('connectionString: ',connectionString);
+    console.log('openaiAPIKeyString: ',openaiAPIKeyString);
 
     process.env.DATABASE_URL = connectionString;
     process.env.OPENAI_API_KEY = openaiAPIKeyString;
