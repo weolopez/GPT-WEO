@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'CabalBot'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_417894595F9D4D64B544FE4A6FE4714A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_720918FB80984DF88922DFB8241CDEC2 }}
           package: .
