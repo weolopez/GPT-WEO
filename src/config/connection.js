@@ -13,8 +13,10 @@ async function putKeyVaultSecretInEnvVar() {
     
     if (!secretName || !keyVaultName || !openaiAPIKey) throw Error("getSecret: Required params missing");
 
-    connectionString = await getSecret(secretName, keyVaultName);
-    openaiAPIKeyString = await getSecret(openaiAPIKey, keyVaultName);
+    connectionString = secretName
+    //  await getSecret(secretName, keyVaultName);
+    openaiAPIKeyString = openaiAPIKey
+    //  await getSecret(openaiAPIKey, keyVaultName);
 
     console.log('connectionString: ',connectionString);
     console.log('openaiAPIKeyString: ',openaiAPIKeyString);
