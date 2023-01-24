@@ -4,7 +4,7 @@ var Task = require('../models/task');
 //call openai api to sumaraize the text
 const { Configuration, OpenAIApi } = require("openai");
 
-const welcome = require("../lib/welcome");
+const welcome = require('../welcome/welcome');
 var router = express.Router();
 
 /* GET home page. */
@@ -22,7 +22,6 @@ router.get('/', function (req, res, next) {
     });
 });
 
-
 // return simple text
 router.get('/summarize', function (req, res, next) {
 // get the text from the request query parameter
@@ -32,6 +31,7 @@ router.get('/summarize', function (req, res, next) {
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
   });
+
   const openai = new OpenAIApi(configuration);
 
   const completion = openai.createCompletion({
@@ -40,8 +40,11 @@ router.get('/summarize', function (req, res, next) {
     temperature: 0.9,
     max_tokens: 2000,
   }).then((completion) => {
-    console.log(completion.data.choices[0].text);
-    res.send(completion.data.choices[0].text);
+    console.log(completion.data);
+    res.send(completion.data);
+  }).catch((err) => {
+    console.log(err);
+    res.send('Sorry! Something went wrong.');
   })
 })
 
@@ -82,7 +85,6 @@ router.post('/completeTask', function (req, res, next) {
     });
 });
 
-
 router.post('/deleteTask', function (req, res, next) {
   const taskId = req.body._id;
   const completedDate = Date.now();
@@ -96,6 +98,5 @@ router.post('/deleteTask', function (req, res, next) {
       res.send('Sorry! Something went wrong.');
     });
 });
-
 
 module.exports = router;
