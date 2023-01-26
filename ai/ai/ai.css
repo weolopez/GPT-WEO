@@ -49,16 +49,17 @@ textarea {
 
 #summery {
     width: 95%;
-    height: 70vh;
+    height: 80vh;
     /* background: white; */
     margin: 0 10px 10px 10px;
 }
 
-.historyOutput {
+#historyOutput {
     width: 95%;
-    height: 70vh;
+    height: 85vh;
     /* background: white; */
     margin: 0 10px 10px 10px;
+    overflow: scroll
 }
 
 /* #submit {
