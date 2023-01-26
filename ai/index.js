@@ -73,7 +73,7 @@ function submit() {
   // //get a length of the prompt
   // let promptLength = prompt.length
   // prompt = persona.substring(0,maxLength-prompt.length)+" "+ prompt
-  let size = 260
+  let size = 4000 
   getCompletion(prompt, size, event => {
     if (event.data[0].finish_reason === 'stop') {
       running = false;
