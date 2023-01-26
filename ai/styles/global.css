@@ -80,9 +80,59 @@
   }
 }
 
-#body {
-  margin-top: 68px !important;
+/* on breakpoint of 767 change #body margin-top to 55px */
+@media (max-width: 767px) {
+  .sidebar {
+    /* transform: translateX(-180px); */
+    display: none;
+  }
 }
+@media (min-width: 766px) {
+  .sidebar {
+    /* transform: translateX(-180px); */
+    display: block;
+  }
+}
+.visible {
+  display: block;
+}
+.sidebar {
+  /* margin-top: 10px; */
+  /* display: block; */
+  transition-property: width;
+  transition-duration: 1s;
+  height: 100vh;
+  width: 185px;
+  z-index: 1;
+}
+
+#body {
+  margin-top: 20px;
+}
+
+#logo {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: -36px;
+  top: 3px;
+  z-index: 9;
+}
+
+.nav-tabs {
+  overflow: auto;
+  white-space: nowrap;
+  display: block;
+  width: 70vw;
+}
+
+.nav-item {
+  display: inline-block;
+  overflow: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
 
 main {
   padding: 0 0 0 0 !important;
@@ -105,16 +155,10 @@ main {
   border-radius: 20rem;
 }
 
-.sidebar {
-  /* margin-top: 10px; */
-  z-index: 0;
-  height: 100vh;
-  width: 185px;
-}
 
 tabs {
   width: 100%;
-  height: 100vh;
+  height: 70vh;
   /* border: 1px groove; */
   display: block;
 }
@@ -137,7 +181,7 @@ footer {
   /* justify-content: flex-start; */
   align-items: center;
   /* align-content: stretch; */
-  justify-content: space-between;    
+  justify-content: space-between;
   background-color: #343541;
   position: fixed;
   bottom: 0;
@@ -146,6 +190,7 @@ footer {
   /* Set the fixed height of the footer here */
   line-height: 60px;
   padding: 25px;
+  z-index: 2;
   /* Vertically center the text there */
 }
 
@@ -157,4 +202,8 @@ footer {
 
 .navbar {
   background-color: rgb(68 70 84) !important;
+}
+
+.tabArea {
+  transform: translateY(-6px)
 }
