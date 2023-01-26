@@ -51,14 +51,14 @@ await cms.initComponents().then(() => {
     value = JSON.parse(value)
     persona = value
     clipboard.value = mediaType + persona.prompt
-    // chat(persona.name)
+    // displayHistory(persona.name)
   })
   cms.page.componentObject.history.setCallback((key, value) => {
     // console.log('persona callback', key, value)
     // value = JSON.parse(value)
     // persona = value
     // clipboard.value = mediaType + persona.prompt
-    chat(key)
+    displayHistory(key)
   })
 
   if (!cms.page.componentObject.chat.user) {
@@ -70,7 +70,7 @@ await cms.initComponents().then(() => {
   }
   cms.page.componentObject.chat.setCallback((text) => {
     console.log('chat callback', text)
-    // chat(text)
+    // displayHistory(text)
   })
 
 })
@@ -174,16 +174,29 @@ function saveKey() {
   location.reload();
 }
 
-function chat(id) {
+function displayHistory(id) {
   let chat = document.getElementById('historyOutput')
   chat.innerHTML = ''
   let chatCollection = new Collection('histories')
   chatCollection.getByName(id).then(out => {
     // console.log('out', out)
+    let counter = 0
     out.history.forEach(item => {
+      counter++
       let div = document.createElement('div')
-      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p>AI: ${item.summery}</p>`
-      else div.innerHTML = `<p>${item.from}:${item.config.prompt}</p><p>AI: ${item.completion.choices[0].text}</p>`
+      div.id = `prompt${counter}`
+      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p  id="summary${counter}" style="display: none">AI: ${item.summery}</p>`
+      else div.innerHTML = `<p>${item.from}:${item.config.prompt}</p><p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
+      //on click of prompt${counter} toggle showing summary${counter} 
+      div.addEventListener('click', (event) => {
+        //get id of event target
+        let id = event.currentTarget.id
+        //get the number of the prompt
+        let counter = id.substring(id.indexOf('t') + 1)
+        let summary = document.getElementById(`summary${counter}`)
+        if (summary.style.display === 'none') summary.style.display = 'block'
+        else summary.style.display = 'none'
+      })
       chat.appendChild(div)
     })
   })

@@ -9,7 +9,7 @@ export const html=` <style>
   form.chat {
     margin: 0;
     cursor: default;
-    position: absolute;
+    position: relative;
     left: 0;
     right: 0;
     bottom: 0;
@@ -210,7 +210,7 @@ export const html=` <style>
     font: 400 13px 'Open Sans', sans-serif;
     border: 0;
     padding: 0 15px;
-    height: 10%;
+    height: 55px;
     outline: 0;
   }
 
@@ -297,7 +297,7 @@ export const html=` <style>
     }
   }
 </style>
-<div id="userID" style="visibility:hidden">
+<div id="userID" style="display:none">
     <input id="userIDInput" type="text" placeholder="Your name"/>
     <button id="userIDSubmit"  class="marginRight btn btn-primary btn-sm">Submit</button>
 </div>
