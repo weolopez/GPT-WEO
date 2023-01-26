@@ -15,7 +15,7 @@ function makeJsonDecoder() {
                     if (lines[i] === 'data: [DONE]') {
                         controller.terminate()
                         return
-                    }
+                    }       
                     //parse line as JSON
                     let jline = JSON.parse(lines[i].substring(5))
                     //enqueue parsed line
@@ -46,8 +46,55 @@ function makeWriteableEventStream(eventTarget) {
         }
     })
 }
+async function getCompletion(myPrompt, max_tokens, callback) {
+    if (max_tokens < 300) {
+        getPartialCompletion(myPrompt, max_tokens, callback)
+    } else {
+        let outlinePrompt = `create an outline for  ${myPrompt}.  The outline should be in the following json format:  { "title": "Winterizing Your Home", "wordCount": "4000", "outline": [ { "sectionTitle": "Introduction", "wordCount": "200" }, { "sectionTitle": "Checking the Roof", "wordCount": "500" }, { "sectionTitle": "Sealing Windows and Doors", "wordCount": "500" }, { "sectionTitle": "Insulating Your Home", "wordCount": "500" }, { "sectionTitle": "Cleaning Gutters and Downspouts", "wordCount": "500" }, { "sectionTitle": "Protecting Outdoor Pipes", "wordCount": "500" }, { "sectionTitle": "Conclusion", "wordCount": "200" } ] } `
+        let outline = await getFullCompleteion(outlinePrompt, max_tokens)
+        let outlineResult = JSON.parse(outline.data[0].text)
+        outlineResult.outline.push('end')
+        await outlineResult.outline.forEach(async (section, index) => {
+            if (section === 'end') {
+                callback(outline)
+                return
+            }
+            let prompt = `${myPrompt} ${section.sectionTitle} `//${outline.sections[index - 1].sectionTitle} ${outline.sections[index + 1].sectionTitle}`
+            let partial = await getFullCompleteion(prompt, 2*Number(section.wordCount))
+            partial.data[0].finish_reason === 'go'
+            // console.log('partial', partial)
+            callback(partial)
+        })
+        // console.log('outline', outline)
+        // callback(outline)
+    }
+}
 
-function getCompletion(myPrompt, max_tokens, callback) {
+function getFullCompleteion(myPrompt, max_tokens) {
+    return new Promise((resolve, reject) => {
+        let returnString = ''
+        getPartialCompletion(myPrompt, max_tokens, (event) => {
+            if (event.data[0].finish_reason === 'stop') {
+                event.data[0].text = returnString
+                resolve(event)
+            } else returnString += event.data[0].text
+        }) 
+    })
+}
+
+// function getFullCompleteion(myPrompt, max_tokens) {
+//     return new Promise((resolve, reject) => {
+//         let returnString = ''
+//         getPartialCompletion(myPrompt, max_tokens, (event) => {
+//             if (event.data[0].finish_reason === 'stop') {
+//                 resolve(returnString)
+//             } else returnString += event.data[0].text
+//         }) 
+//     })
+// }
+
+function getPartialCompletion(myPrompt, max_tokens, callback) {
+    max_tokens = max_tokens - myPrompt.length
 
     const eventTarget = new EventTarget()
     const jsonDecoder = makeJsonDecoder()

@@ -12,7 +12,7 @@ let persona;
 let mediaType;
 await cms.initComponents().then(() => {
   cms.page.componentObject.firstTabs.setCallback((tabid) => {
-    console.log('firstTabs callback', tabid)
+    // console.log('firstTabs callback', tabid)
     // hide footer if tabid = 'chat' or 'history'
     if (tabid == 'chat' || tabid == 'historyOutput') {
       document.getElementById('footer').style.display = 'none'
@@ -93,7 +93,7 @@ function submit() {
   //change the location to #summery
   window.location.hash = '#summery'
 
-  document.getElementById("summery").innerHTML = ''
+  document.getElementById("summery").value = ''
   let prompt = clipboard.value
   // let persona = `create a ${selectedMedia.key} written by${personaTextArea.value} about`
   // //get a length of the prompt
@@ -103,7 +103,7 @@ function submit() {
   getCompletion(prompt, size, event => {
     if (event.data[0].finish_reason === 'stop') {
       running = false;
-      var completion = document.getElementById("summery").innerHTML
+      var completion = document.getElementById("summery").value
       var historyEntry = {
         prompt: prompt,
         completion: completion,
@@ -111,12 +111,12 @@ function submit() {
       }
       historyCollection.add(historyEntry).then(hist => {
         console.log('history added', hist)
-        document.getElementById("summery").innerHTML += "\n\n"+hist._id
+        document.getElementById("summery").value += "\n\n"+hist._id
       })
     }
 
     //append event data to paragraph with id=summery
-    document.getElementById("summery").innerHTML += event.data[0].text;
+    document.getElementById("summery").value += event.data[0].text;
   })
 }
 function getCollectionHistory() {
@@ -133,7 +133,7 @@ var historyCollection = getCollectionHistory()
 let copyButton = document.getElementById('copy')
 copyButton.addEventListener('click', copy)
 function copy() {
-  let summery = document.getElementById('summery').innerText
+  let summery = document.getElementById('summery').value
   navigator.clipboard.writeText(summery)
   let obj = {
     name: persona.name,
