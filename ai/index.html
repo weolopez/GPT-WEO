@@ -38,11 +38,13 @@
 
 <body style="visibility: hidden">
 
-    <nav id="navBar" data-modules="navbar" class="cms"></nav>
+    <!-- <nav id="navBar" data-modules="navbar" class="cms"></nav> -->
+    <div  id="logo" data-modules="logo" class="cms" style="margin: 0 82px 0 70px">
+    </div>
 
     <div id="body" class="container-fluid">
         <div class="row">
-            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <nav id="sidebar" class="col-md-2 bg-light sidebar">
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column" style="padding-top: 20px;">
                         <li class="nav-item">
@@ -82,22 +84,22 @@
                 </div>
 
                 <tabs id="firstTabs" class="cms" data-modules="tabs">
-                    <div id="promptArea" name="Prompt Area">
+                    <div id="promptArea" class="tabArea" name="Prompt Area">
                         <textarea id="clipboard" maxlength="1000" class="paper">write a 1,500 word article about </textarea>
                         <div class="marginRight" style="display: flex; justify-content: space-between;">
                             <div id="wordcount">0/1000</div>
                         </div>
                     </div>
-                    <p id="summery" name="AI Content" class="summery paper"></p>
-                    <div id="historyOutput" name="History" class="historyOutput paper"> </div>
-                    <div id="chat" name="Chat" data-modules="chat" class="cms historyOutput paper"> </div>
+                    <p id="summery" name="AI Content" class="tabArea summery paper"></p>
+                    <div id="historyOutput" name="History" class="tabArea historyOutput paper"> </div>
+                    <div id="chat" name="Chat" data-modules="chat" class="cms tabArea historyOutput paper"> </div>
                 </tabs>
 
 
             </main>
         </div>
     </div>
-    <footer class=" promptBtnGrp">
+    <footer id="footer" class=" promptBtnGrp">
         <div id="editToggle" style="display: none;" >
             <input id="editButton" type="checkbox" data-toggle="toggle" data-style="ios">
         </div>

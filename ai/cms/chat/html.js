@@ -41,11 +41,12 @@ export const html=` <style>
   }
 
   form.chat .messages {
+    background-color: #343541;
     display: block;
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;
-    height: 90%;
+    height: 81vh;
     width: 100%;
     padding: 2% 3%;
     border-bottom: 1px solid #ecf0f1;
@@ -214,7 +215,7 @@ export const html=` <style>
   }
 
   form.chat input[type='text'] {
-    width: 73%;
+    width: 100%;
     float: left;
   }
 
@@ -306,7 +307,7 @@ export const html=` <style>
     
   </div>
   <input id="chatInput" type="text" placeholder="Your message">
-  <input id="chatSubmit" type="submit" value="Send" ">
+  <!--input id="chatSubmit" type="submit" value="Send" -->
   </form>
 </div>
 `

@@ -11,7 +11,33 @@ let cms = new CMS()
 let persona;
 let mediaType;
 await cms.initComponents().then(() => {
-  // console.log('cms ready')
+  cms.page.componentObject.firstTabs.setCallback((tabid) => {
+    console.log('firstTabs callback', tabid)
+    // hide footer if tabid = 'chat' or 'history'
+    if (tabid == 'chat' || tabid == 'historyOutput') {
+      document.getElementById('footer').style.display = 'none'
+    } else {
+      document.getElementById('footer').style.display = 'flex'
+    }
+    if (tabid == 'summery') {
+      document.getElementById('copy').style.display = 'block'
+    } else {
+      document.getElementById('copy').style.display = 'none'
+    }
+    //only display submit button if tabid = 'promptArea'
+    if (tabid == 'promptArea') {
+      document.getElementById('submit').style.display = 'block'
+    } else {
+      document.getElementById('submit').style.display = 'none'
+    }
+  })
+
+  cms.page.componentObject.firstTabs.setTab(cms.page.componentObject.firstTabs.currentTabID)
+  cms.page.componentObject.logo.setCallback((event) => {
+    // get element with id = sidebar and toggle the class 'visible'
+    document.getElementById('sidebar').classList.toggle('visible')
+  })
+
 
   cms.page.componentObject.mediaType.setCallback((key, value) => {
     // console.log('mediaType callback', key, value)

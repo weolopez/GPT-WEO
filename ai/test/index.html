@@ -53,8 +53,9 @@
             document.getElementById('data').value = JSON.stringify(data);
         }
         let getInputData = () => {
+            let collectionName = document.getElementById('collection').value
             let obj = document.getElementById('data').value
-            let collection = new Collection('cms', poster)
+            let collection = new Collection(collectionName, poster)
             let id = document.getElementById('id').value;
             obj =  (typeof obj === 'object') ? JSON.parse(obj) : obj
             let name = document.getElementById('name').value;
