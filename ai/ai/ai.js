@@ -1,4 +1,5 @@
-#! /usr/bin/env node
+import { getCompletionConfig } from './aiModels.js'
+
 function makeJsonDecoder() {
     return new TransformStream({
         start(controller) {
@@ -15,9 +16,14 @@ function makeJsonDecoder() {
                     if (lines[i] === 'data: [DONE]') {
                         controller.terminate()
                         return
-                    }
+                    }       
                     //parse line as JSON
-                    let jline = JSON.parse(lines[i].substring(5))
+                    let jline;
+                    try {
+                        jline = JSON.parse(lines[i].substring(5))
+                    } catch(e) {
+                        console.error(lines)// error in the above string (in this case, yes)!
+                    }
                     //enqueue parsed line
                     controller.enqueue(jline)
                 }
@@ -31,6 +37,9 @@ function makeWriteableEventStream(eventTarget) {
             eventTarget.dispatchEvent(new Event('start'))
         },
         write(message, controller) {
+if (!message) {
+    console.log('message is null')
+}
             eventTarget.dispatchEvent(
                 new MessageEvent(
                     message.object,
@@ -46,8 +55,55 @@ function makeWriteableEventStream(eventTarget) {
         }
     })
 }
+export async function getCompletion(myPrompt, max_tokens, callback) {
+    if (max_tokens < 300) {
+        getPartialCompletion(myPrompt, max_tokens, callback)
+    } else {
+        let outlinePrompt = `create an outline for  ${myPrompt}.  The outline should be in the following json format:  { "title": "Winterizing Your Home", "wordCount": "4000", "outline": [ { "sectionTitle": "Introduction", "wordCount": "200" }, { "sectionTitle": "Checking the Roof", "wordCount": "500" }, { "sectionTitle": "Sealing Windows and Doors", "wordCount": "500" }, { "sectionTitle": "Insulating Your Home", "wordCount": "500" }, { "sectionTitle": "Cleaning Gutters and Downspouts", "wordCount": "500" }, { "sectionTitle": "Protecting Outdoor Pipes", "wordCount": "500" }, { "sectionTitle": "Conclusion", "wordCount": "200" } ] } `
+        let outline = await getFullCompleteion(outlinePrompt, max_tokens)
+        let outlineResult = JSON.parse(outline.data[0].text)
+        outlineResult.outline.push('end')
+        await outlineResult.outline.forEach(async (section, index) => {
+            if (section === 'end') {
+                callback(outline)
+                return
+            }
+            let prompt = `${myPrompt} ${section.sectionTitle} `//${outline.sections[index - 1].sectionTitle} ${outline.sections[index + 1].sectionTitle}`
+            let partial = await getFullCompleteion(prompt, 2*Number(section.wordCount))
+            partial.data[0].finish_reason === 'go'
+            // console.log('partial', partial)
+            callback(partial)
+        })
+        // console.log('outline', outline)
+        // callback(outline)
+    }
+}
 
-function getCompletion(myPrompt, max_tokens, callback) {
+function getFullCompleteion(myPrompt, max_tokens) {
+    return new Promise((resolve, reject) => {
+        let returnString = ''
+        getPartialCompletion(myPrompt, max_tokens, (event) => {
+            if (event.data[0].finish_reason === 'stop') {
+                event.data[0].text = returnString
+                resolve(event)
+            } else returnString += event.data[0].text
+        }) 
+    })
+}
+
+// function getFullCompleteion(myPrompt, max_tokens) {
+//     return new Promise((resolve, reject) => {
+//         let returnString = ''
+//         getPartialCompletion(myPrompt, max_tokens, (event) => {
+//             if (event.data[0].finish_reason === 'stop') {
+//                 resolve(returnString)
+//             } else returnString += event.data[0].text
+//         }) 
+//     })
+// }
+
+function getPartialCompletion(myPrompt, max_tokens, callback) {
+    max_tokens = max_tokens - myPrompt.length
 
     const eventTarget = new EventTarget()
     const jsonDecoder = makeJsonDecoder()
@@ -55,24 +111,9 @@ function getCompletion(myPrompt, max_tokens, callback) {
 
     eventTarget.addEventListener('text_completion', callback)
     
-    fetch("https://api.openai.com/v1/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "event-stream",
-            'Authorization': `Bearer ${openai_key}`
-        },
-        body: JSON.stringify({
-            model: "text-davinci-003",
-            prompt: myPrompt,
-            temperature: 0.5,
-            max_tokens: max_tokens,
-            n: 1,
-            stop: 'none',
-            stream: true
-        })
-    })
+    fetch("https://api.openai.com/v1/completions", getCompletionConfig(myPrompt, max_tokens) )
         .then(function (response) {
+            if (!response.ok) return
             let res = response.body
                 .pipeThrough(new TextDecoderStream())
                 .pipeThrough(jsonDecoder)

@@ -2,6 +2,8 @@ import { Component } from '/ai/cms/component.js'
 import { html } from '/ai/cms/tabs/html.js'
 
 export class tabs extends Component {
+    currentTabID
+
     constructor(element, cms, callback) {
         super(element, cms, callback)
         //get children of element
@@ -60,5 +62,7 @@ export class tabs extends Component {
                 children[i].style.display = 'none'
             }
         }
+        this.currentTabID = id
+        if (this.callback) this.callback(id)
     }
 }

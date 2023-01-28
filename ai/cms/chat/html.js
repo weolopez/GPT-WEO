@@ -9,7 +9,7 @@ export const html=` <style>
   form.chat {
     margin: 0;
     cursor: default;
-    position: absolute;
+    position: relative;
     left: 0;
     right: 0;
     bottom: 0;
@@ -41,11 +41,12 @@ export const html=` <style>
   }
 
   form.chat .messages {
+    background-color: #343541;
     display: block;
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;
-    height: 90%;
+    height: 74vh;
     width: 100%;
     padding: 2% 3%;
     border-bottom: 1px solid #ecf0f1;
@@ -209,12 +210,12 @@ export const html=` <style>
     font: 400 13px 'Open Sans', sans-serif;
     border: 0;
     padding: 0 15px;
-    height: 10%;
+    height: 55px;
     outline: 0;
   }
 
   form.chat input[type='text'] {
-    width: 73%;
+    width: 100%;
     float: left;
   }
 
@@ -296,7 +297,7 @@ export const html=` <style>
     }
   }
 </style>
-<div id="userID" style="visibility:hidden">
+<div id="userID" style="display:none">
     <input id="userIDInput" type="text" placeholder="Your name"/>
     <button id="userIDSubmit"  class="marginRight btn btn-primary btn-sm">Submit</button>
 </div>
@@ -306,7 +307,7 @@ export const html=` <style>
     
   </div>
   <input id="chatInput" type="text" placeholder="Your message">
-  <input id="chatSubmit" type="submit" value="Send" ">
+  <!--input id="chatSubmit" type="submit" value="Send" -->
   </form>
 </div>
 `

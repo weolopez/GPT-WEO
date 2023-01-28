@@ -42,23 +42,23 @@
 
 textarea {
     width: 100%;
-    height: 100%;
+    height: 75vh;
     border: none;
     /* background: white; */
 }
 
-#summery {
+#summary {
     width: 95%;
-    height: 70vh;
-    /* background: white; */
+    height: 80vh;
     margin: 0 10px 10px 10px;
 }
 
-.historyOutput {
+#historyOutput {
     width: 95%;
-    height: 70vh;
+    height: 85vh;
     /* background: white; */
     margin: 0 10px 10px 10px;
+    overflow: scroll
 }
 
 /* #submit {
@@ -83,6 +83,6 @@ textarea {
     height: 450px;
     display: block;
     position: absolute;
-    top: -400px;
+    top: -453px;
     position: absolute;
 }

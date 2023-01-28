@@ -93,7 +93,7 @@ export class chat extends Component {
         this.userIDInput = document.getElementById("userIDInput");
         this.setUser(this.userIDInput.value);
         localStorage.setItem('user', this.userIDInput.value);
-        document.getElementById("userID").style.visibility = "hidden";
-        document.getElementById("chatBox").style.visibility = "visible";
+        document.getElementById("userID").style.display = "none";
+        document.getElementById("chatBox").style.display = "block";
     }
 }

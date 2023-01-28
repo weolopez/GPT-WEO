@@ -1,6 +1,7 @@
 // let createError = require("http-errors");
 import HttpError from "http-errors";
 import express from "express";
+import favicon from "serve-favicon";
 // let path = require("path");
 import path from "path";
 // let cookieParser = require("cookie-parser");
@@ -29,6 +30,8 @@ export async function getApp() {
 
   const app = express();
 
+
+  app.use(favicon(root+'/ai/favicon.ico'))
   const port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
   // create a route for static html files
@@ -52,8 +55,7 @@ export async function getApp() {
   app.use("/weo", weoRouter);
   app.use("/crud", crudRouter);
   app.use("/js", express.static(root + "/node_modules/bootstrap/dist/js")); // redirect bootstrap JS
-  app.use(
-    "/css",
+  app.use("/css",
     express.static(root + "/node_modules/bootstrap/dist/css")
   ); // redirect CSS bootstrap
 
