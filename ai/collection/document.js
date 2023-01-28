@@ -49,7 +49,7 @@ export async function getByName(collection, name) {
     return await fetch(`/crud/${collection}/names/${name}`, req('GET'))
         .then(response => {
             if (response.status === 200) return response.json()
-            else throw new Error(response.status)
+            else throw new Error(response.status+': '+collection+': '+name)
         })
 }
 

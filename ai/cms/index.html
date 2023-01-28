@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
     <!-- <link rel="icon" href="favicon.svg"> -->
-    <title>A! v1</title>
+    <title>CMS Tester</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" <link
         rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -30,10 +30,6 @@
 
 
     <link rel="stylesheet" href="/ai/styles/global.css">
-    <link rel="stylesheet" href="/ai/ai/ai.css">
-
-
-    <!-- <script src="/ai/ai/ai.js"> </script> -->
 </head>
 
 <body style="visibility: hidden">
@@ -53,22 +49,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <label>Personas</label>
-                            <select id="persona" data-collection="personas" data-modules="dropdown"
-                                class="cms form-select">
-                            </select>
-                        </li>
-                        <li class="nav-item">
-                            <label>Media Types</label>
-                            <select id="media" data-modules="dropdown" class="cms form-select">
-                            </select>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">
-                                History
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <select id="history" data-collection="histories" data-modules="dropdown" class="cms form-select">
                             </select>
                         </li>
@@ -83,17 +63,16 @@
                     <button id="saveKey">Save Key</button>
                 </div>
 
-                <tabs id="firstTabs" class="cms" data-modules="tabs">
-                    <div id="promptArea" class="tabArea" name="Prompt Area">
-                        <textarea id="clipboard" maxlength="1000" class="paper">write a 1,500 word article about </textarea>
-                        <div class="marginRight" style="display: flex; justify-content: space-between;">
-                            <div id="wordcount">0/1000</div>
-                        </div>
-                    </div>
-                    <div id="summary" name="Completion" data-modules="gpt3" class="cms tabArea summary paper"></div>
-                    <div id="historyOutput" name="History" class="tabArea historyOutput paper"> </div>
-                    <div id="chat" name="Chat" data-modules="chat" class="cms tabArea historyOutput paper"> </div>
-                </tabs>
+            <div id="gpt" name="Summary" data-modules="gpt3" class="cms"
+                style="
+                background:white;
+                color:black;
+                height: 500px;
+                margin-top: 100px;
+                overflow: scroll;
+                width: 500px;
+                ">
+            </div>    
 
 
             </main>
@@ -115,9 +94,27 @@
     <div id="jsoneditor"></div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.js"></script>
+    <script type="module">
+        import { CMS } from '/ai/cms/cms.js'
+        let cms = new CMS()
+        await cms.initComponents().then(() => {
+            console.log('components loaded')
+            cms.page.componentObject.gpt.submit(`
+            tweet a joke about tesla put it in json format with an explaination of the joke'
+        `,400)
+        })
 
+        // let completion = new Completion(completionCallback)
+        // function completionCallback (data) {
+        //    summary.value += data.text
+        //     console.log(data.finish_reason, data.index)
+        // }
 
-    <script type="module" src="index.js"></script>
+        // completion.getCompletion(`
+        //     tweet a joke about tesla put it in json format with an explaination of the joke'
+        // `,400)
+        //  the following is a 1500 word long form article about the history of tactics in soccer changes over the last 50 years. 
+    </script>
 
 </body>
 

@@ -73,7 +73,7 @@ export class Collection {
         return await getByName(this.collection, name).then(data => {
             if (this.callback) this.callback(data)
             return data
-        }) .catch(err => {
+        }).catch(err => {
             console.error(err)
         })
     }

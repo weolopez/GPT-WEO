@@ -1,4 +1,5 @@
-#! /usr/bin/env node
+import { getCompletionConfig } from './aiModels.js'
+
 function makeJsonDecoder() {
     return new TransformStream({
         start(controller) {
@@ -17,7 +18,12 @@ function makeJsonDecoder() {
                         return
                     }       
                     //parse line as JSON
-                    let jline = JSON.parse(lines[i].substring(5))
+                    let jline;
+                    try {
+                        jline = JSON.parse(lines[i].substring(5))
+                    } catch(e) {
+                        console.error(lines)// error in the above string (in this case, yes)!
+                    }
                     //enqueue parsed line
                     controller.enqueue(jline)
                 }
@@ -31,6 +37,9 @@ function makeWriteableEventStream(eventTarget) {
             eventTarget.dispatchEvent(new Event('start'))
         },
         write(message, controller) {
+if (!message) {
+    console.log('message is null')
+}
             eventTarget.dispatchEvent(
                 new MessageEvent(
                     message.object,
@@ -46,7 +55,7 @@ function makeWriteableEventStream(eventTarget) {
         }
     })
 }
-async function getCompletion(myPrompt, max_tokens, callback) {
+export async function getCompletion(myPrompt, max_tokens, callback) {
     if (max_tokens < 300) {
         getPartialCompletion(myPrompt, max_tokens, callback)
     } else {
@@ -102,24 +111,9 @@ function getPartialCompletion(myPrompt, max_tokens, callback) {
 
     eventTarget.addEventListener('text_completion', callback)
     
-    fetch("https://api.openai.com/v1/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "event-stream",
-            'Authorization': `Bearer ${openai_key}`
-        },
-        body: JSON.stringify({
-            model: "text-davinci-003",
-            prompt: myPrompt,
-            temperature: 0.5,
-            max_tokens: max_tokens,
-            n: 1,
-            stop: 'none',
-            stream: true
-        })
-    })
+    fetch("https://api.openai.com/v1/completions", getCompletionConfig(myPrompt, max_tokens) )
         .then(function (response) {
+            if (!response.ok) return
             let res = response.body
                 .pipeThrough(new TextDecoderStream())
                 .pipeThrough(jsonDecoder)

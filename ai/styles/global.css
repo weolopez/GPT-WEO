@@ -34,6 +34,7 @@
     color: #fff;
     border: none;
     transform: translateY(-1px);
+    padding: 20px;
   }
 
   .sidebar {
@@ -206,4 +207,10 @@ footer {
 
 .tabArea {
   transform: translateY(-6px)
+}
+
+#openai_key_div {
+    background: BLACK;
+    margin-top: 55px;
+    padding: 13px;
 }
