@@ -11,12 +11,14 @@ export class dropdown extends Component {
         if (this.collectionName) {
             this.collection = new Collection(this.collectionName, (data) => {
                 this.setOptions(data, (key, value) => {
-                    console.log('generic callback', key, value)
+                    // console.log('generic callback', key, value)
                 })
             })
             this.collection.get()
         } else if (cms.page.data[this.id]) {
             this.setOptions(cms.page.data[this.id], this.callback)
+        } else {
+            console.warn('no data found for dropdown', this.id)
         }
     }
     save(data) {

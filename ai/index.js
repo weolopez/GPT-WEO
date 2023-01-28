@@ -2,9 +2,6 @@ import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
 import { upsert } from '/ai/collection/document.js'
 
-//create a variable for all the child elements inside mediaContent
-// let mediaContent = document.getElementById('mediaContent').children
-
 let characterCount = 0;
 let maxLength = 1000
 let cms = new CMS()
@@ -19,7 +16,7 @@ await cms.initComponents().then(() => {
     } else {
       document.getElementById('footer').style.display = 'flex'
     }
-    if (tabid == 'summery') {
+    if (tabid == 'summary') {
       document.getElementById('copy').style.display = 'block'
     } else {
       document.getElementById('copy').style.display = 'none'
@@ -39,30 +36,26 @@ await cms.initComponents().then(() => {
   })
 
 
-  cms.page.componentObject.mediaType.setCallback((key, value) => {
+  cms.page.componentObject.media.setCallback((key, value) => {
     // console.log('mediaType callback', key, value)
     mediaType = JSON.parse(value)
-    maxLength = Number(value)
-    clipboard.value = mediaType + persona
+    maxLength = Number(mediaType.tokens)
+    clipboard.value = mediaType.name + persona
   })
 
   cms.page.componentObject.persona.setCallback((key, value) => {
     // console.log('persona callback', key, value)
     value = JSON.parse(value)
     persona = value
-    clipboard.value = mediaType + persona.prompt
+    clipboard.value = mediaType.name + persona.prompt
     // displayHistory(persona.name)
   })
   cms.page.componentObject.history.setCallback((key, value) => {
-    // console.log('persona callback', key, value)
-    // value = JSON.parse(value)
-    // persona = value
-    // clipboard.value = mediaType + persona.prompt
     displayHistory(key)
   })
 
   if (!cms.page.componentObject.chat.user) {
-    document.getElementById("userID").style.visibility = "visible";
+    document.getElementById("userID").style.display = "block";
     document.getElementById("chatBox").style.visibility = "hidden";
     // let userIDInput = document.getElementById("userIDInput");
     let userIDSubmit = document.getElementById("userIDSubmit");
@@ -86,55 +79,44 @@ let submitButton = document.getElementById('submit')
 submitButton.addEventListener('click', submit)
 let running = false;
 function submit() {
-  if (running) {
-    return;
-  }
+  if (running) return;
   running = true;
-  //change the location to #summery
-  window.location.hash = '#summery'
+  //change the location to #summary
+  window.location.hash = '#summary'
+  //TODO expose api to clear the summary
+  // document.getElementById("summary").value = ''
 
-  document.getElementById("summery").value = ''
   let prompt = clipboard.value
-  // let persona = `create a ${selectedMedia.key} written by${personaTextArea.value} about`
-  // //get a length of the prompt
-  // let promptLength = prompt.length
-  // prompt = persona.substring(0,maxLength-prompt.length)+" "+ prompt
-  let size = 4000 
-  getCompletion(prompt, size, event => {
-    if (event.data[0].finish_reason === 'stop') {
+  let size = mediaType.tokens 
+  cms.page.componentObject.summary.submit(prompt,size)
       running = false;
-      var completion = document.getElementById("summery").value
-      var historyEntry = {
-        prompt: prompt,
-        completion: completion,
-        persona: 'weo'
-      }
-      historyCollection.add(historyEntry).then(hist => {
-        console.log('history added', hist)
-        document.getElementById("summery").value += "\n\n"+hist._id
-      })
-    }
-
-    //append event data to paragraph with id=summery
-    document.getElementById("summery").value += event.data[0].text;
-  })
+      // var historyEntry = {
+      //   prompt: prompt,
+      //   completion: completion,
+      //   persona: 'weo'
+      // }
+      // historyCollection.add(historyEntry).then(hist => {
+      //   // console.log('history added', hist)
+      //   document.getElementById("summary").value += "\n\n"+hist._id
+      // })
 }
-function getCollectionHistory() {
-  var token = localStorage.getItem('openai_key')
-  if (token == null) return
-  token = 'sk' + token.substring(token.indexOf('-') + 1)
-  return new Collection(token, (history) => {
-    console.log('history: ', history)
-  })
-}
-var historyCollection = getCollectionHistory()
 
-// on click of copy button add the text from the summery paragraph to the clipboard
+// function getCollectionHistory() {
+//   var token = localStorage.getItem('openai_key')
+//   if (token == null) return
+//   token = 'sk' + token.substring(token.indexOf('-') + 1)
+//   return new Collection(token, (history) => {
+//     // console.log('history: ', history)
+//   })
+// }
+// var historyCollection = getCollectionHistory()
+
+// on click of copy button add the text from the summary paragraph to the clipboard
 let copyButton = document.getElementById('copy')
 copyButton.addEventListener('click', copy)
 function copy() {
-  let summery = document.getElementById('summery').value
-  navigator.clipboard.writeText(summery)
+  let summary = document.getElementById('summary').value
+  navigator.clipboard.writeText(summary)
   let obj = {
     name: persona.name,
     history: {
@@ -142,7 +124,7 @@ function copy() {
       persona: persona,
       media: mediaType,
       prompt: clipboard.value,
-      summery: summery
+      summary: summary
     }
   }
 
@@ -169,7 +151,6 @@ document.getElementById('saveKey').addEventListener('click', saveKey);
 function saveKey() {
   localStorage.setItem('openai_key', document.getElementById('openai_key').value);
   document.getElementById('openai_key_div').style.display = 'none';
-  // document.getElementById('not_openai_key_div').style.display = 'block';
   //reload page
   location.reload();
 }
@@ -185,7 +166,7 @@ function displayHistory(id) {
       counter++
       let div = document.createElement('div')
       div.id = `prompt${counter}`
-      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p  id="summary${counter}" style="display: none">AI: ${item.summery}</p>`
+      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p  id="summary${counter}" style="display: none">AI: ${item.summary}</p>`
       else div.innerHTML = `<p>${item.from}:${item.config.prompt}</p><p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
       //on click of prompt${counter} toggle showing summary${counter} 
       div.addEventListener('click', (event) => {

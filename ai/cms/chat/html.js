@@ -46,7 +46,7 @@ export const html=` <style>
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;
-    height: 81vh;
+    height: 74vh;
     width: 100%;
     padding: 2% 3%;
     border-bottom: 1px solid #ecf0f1;

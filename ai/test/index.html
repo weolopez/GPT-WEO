@@ -44,6 +44,14 @@
 
 </body>
 
+<script>
+    function clear() {
+        //save openai_key from localstorage
+        let key = localStorage.getItem('openai_key')
+        localStorage.clear()
+        localStorage.setItem('openai_key', key)
+    }
+</script>
     <script type="module">
         import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
         import { Collection } from '/ai/collection/collection.js';
@@ -124,12 +132,5 @@
         window.weoai = () => {
             weoai(document.getElementById('data').value, 'weolopez').then(present)
         } 
-
-        window.clear = () => {
-            //save openai_key from localstorage
-            let key = localStorage.getItem('openai_key')
-            localStorage.clear()
-            localStorage.setItem('openai_key', key)
-        }
-    </script>
+</script>
 </html>
