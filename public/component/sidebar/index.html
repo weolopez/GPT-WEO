@@ -1,0 +1,69 @@
+<!-- html template -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>My App</title>
+
+</head>
+
+<body>
+  <main class="row">
+    <sidebar id="mysidebar" data-module="sidebar" class="component">
+    </sidebar>
+    <tabs id="mainTabs" class="component tabs" data-module="tabs">
+      <div id="app1" class="paper" name="First Tab">Hello</div>
+      <div id="app2" class="paper" name="Second Tab">Weo</div>
+      <div id="app3" class="paper" name="Theird Tab">World</div>
+      <div id="app4" class="paper" name="Fourth Tab">Hello</div>
+      <div id="app5" class="paper" name="Fith Tab">Weo</div>
+      <div id="app6" class="paper" name="Sixth Tab">World</div>
+      <div id="app7" class="paper" name="Seventh Tab">Hello</div>
+      <div id="app8" class="paper" name="Eighth Tab">Weo</div>
+      <div id="app9" class="paper" name="Nineth Tab">World</div>
+    </tabs>
+  </main>
+</body>
+<style>
+  .paper {
+    background-color: #343541;
+    color: #fff;
+    border: none;
+    transform: translateY(-1px);
+    padding: 20px;
+    width: 90vw;
+    height: 80vh;
+  }
+
+  html * {
+    font-size: 16px;
+    line-height: 1.625;
+    font-family: Nunito, sans-serif;
+  }
+  
+  .row {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .tabs {
+    display: block;
+    width: 100%;
+    height: 90vh;
+  }
+
+  body {
+    background-color: rgb(68 70 84) !important;
+    margin:0;
+  }
+</style>
+<script type="module">
+  import { Component } from '/component/component.js';
+  const component = new Component();
+
+</script>
+
+</html>
