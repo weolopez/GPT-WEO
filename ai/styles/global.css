@@ -34,7 +34,7 @@
     color: #fff;
     border: none;
     transform: translateY(-1px);
-    padding: 20px;
+    /* padding: 20px; */
   }
 
   .sidebar {

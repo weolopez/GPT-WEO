@@ -10,7 +10,11 @@
 
 <body>
   <main class="row">
-    <sidebar id="mysidebar" data-module="sidebar" class="component">
+    <sidebar id="mysidebar" data-module="sidebar" class="component sidebar weobar-block" style="width:25%">
+      <h3 class="weobar-item">Menu</h3>
+      <a href="#" class="weobar-item weobutton">Link 1</a>
+      <a href="#" class="weobar-item weobutton">Link 2</a>
+      <a href="#" class="weobar-item weobutton">Link 3</a>
     </sidebar>
     <tabs id="mainTabs" class="component tabs" data-module="tabs">
       <div id="app1" class="paper" name="First Tab">Hello</div>
@@ -51,8 +55,14 @@
 
   .tabs {
     display: block;
-    width: 100%;
+    width: 75%;
     height: 90vh;
+  }
+  .sidebar {
+    background-color: rgb(68 70 84) 
+  }
+  .weobar-block {
+    background-color: rgb(68 70 84) 
   }
 
   body {

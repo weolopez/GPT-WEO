@@ -1,6 +1,10 @@
 export const html = 
 `
 <style>
+.tabs {
+    position: fixed;
+    right: 0;
+}
 .nav {
     --bs-nav-link-padding-x: 1rem;
     --bs-nav-link-padding-y: 0.5rem;
@@ -16,7 +20,7 @@ export const html =
     overflow: auto;
     white-space: nowrap;
     display: block;
-    width: 100vw;
+    width: auto;
     scrollbar-width: none;
     border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
 }
@@ -39,6 +43,7 @@ export const html =
 .nav-tabs .nav-link {
     border: none;
     outline: none;
+
 
     margin-bottom: calc(-1 * var(--bs-nav-tabs-border-width));
     background: 0 0;

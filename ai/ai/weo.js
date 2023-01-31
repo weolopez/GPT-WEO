@@ -27,7 +27,7 @@ export const modelJSON = {
     "config": {
       "model": "text-davinci-003",
       "prompt": "empty prompt",
-      "temperature": 0.2,
+      "temperature": 0.8,
       "max_tokens": 4000
     }
 }
