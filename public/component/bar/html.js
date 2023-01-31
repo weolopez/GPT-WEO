@@ -5,7 +5,7 @@ export const html =
     position: fixed;
     right: 0;
 }
-.nav {
+.bar {
     --bs-nav-link-padding-x: 1rem;
     --bs-nav-link-padding-y: 0.5rem;
     display: flex;
@@ -20,10 +20,10 @@ export const html =
     scrollbar-width: none;
     border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
 }
-.nav::-webkit-scrollbar {
+.bar::-webkit-scrollbar {
     display: none;
   }
-.nav-item {
+.bar-item {
     display: inline-block;
     overflow: auto;
     overflow-y: hidden;
@@ -31,12 +31,12 @@ export const html =
     margin-bottom: -8px;
 }
 
-.nav-item .nav-link.active {
+.bar-item .bar-link.active {
     background-color: #343541;
     color: #fff;
     border: none;
 }
-.nav-tabs .nav-link {
+.bar-tabs .bar-link {
     border: none;
     outline: none;
 
