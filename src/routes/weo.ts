@@ -9,7 +9,7 @@ const router = express.Router();
 const config= {
   model: "text-davinci-003",
   prompt: 'This is a test prompt',
-  temperature: 0.9,
+  temperature: 0.3,
   max_tokens: 2000,
 }
 
@@ -72,7 +72,6 @@ console.dir('defaultJSON: ',defaultJSON)
 
     res.send(defaultJSON);
   }).catch((err: any) => {
-
     res.send('Sorry! Something went wrong.');
   })
 

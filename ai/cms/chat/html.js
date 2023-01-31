@@ -39,14 +39,16 @@ export const html=` <style>
     right: 0;
     z-index: 4
   }
-
+  .messages::-webkit-scrollbar {
+    display: none;
+  }
   form.chat .messages {
     background-color: #343541;
     display: block;
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;
-    height: 74vh;
+    height: 80vh;
     width: 100%;
     padding: 2% 3%;
     border-bottom: 1px solid #ecf0f1;
@@ -296,6 +298,12 @@ export const html=` <style>
       width: 100%;
     }
   }
+  #chatInput {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    height: 56px;
+  }
 </style>
 <div id="userID" style="display:none">
     <input id="userIDInput" type="text" placeholder="Your name"/>
@@ -306,8 +314,8 @@ export const html=` <style>
   <div class="messages" id="collabthread">
     
   </div>
-  <input id="chatInput" type="text" placeholder="Your message">
   <!--input id="chatSubmit" type="submit" value="Send" -->
   </form>
 </div>
+<input id="chatInput" type="text"  placeholder="Your message">
 `

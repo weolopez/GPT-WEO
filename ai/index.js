@@ -11,11 +11,13 @@ await cms.initComponents().then(() => {
   cms.page.componentObject.firstTabs.setCallback((tabid) => {
     // console.log('firstTabs callback', tabid)
     // hide footer if tabid = 'chat' or 'history'
-    if (tabid == 'chat' || tabid == 'historyOutput') {
-      document.getElementById('footer').style.display = 'none'
-    } else {
-      document.getElementById('footer').style.display = 'flex'
-    }
+    // if (tabid == 'chat' || tabid == 'historyOutput') {
+      // document.getElementById('footer').style.display = 'none'
+      // get #chatInput and set focus
+      // document.getElementById('chatInput').focus()
+    // } else {
+      // document.getElementById('footer').style.display = 'flex'
+    // }
     if (tabid == 'summary') {
       document.getElementById('copy').style.display = 'block'
     } else {
@@ -115,7 +117,7 @@ function submit() {
 let copyButton = document.getElementById('copy')
 copyButton.addEventListener('click', copy)
 function copy() {
-  let summary = document.getElementById('summary').value
+  let summary = document.getElementById('gptSummary').value
   navigator.clipboard.writeText(summary)
   let obj = {
     name: persona.name,
