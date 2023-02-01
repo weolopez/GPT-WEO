@@ -61,7 +61,7 @@ export class Completion {
     }
 
     getCompletion(myPrompt, max_tokens, isStream = true) {
-        if (max_tokens > 3500) {
+        if (max_tokens > 350) {
             this.getLongCompletion(myPrompt, max_tokens)
             return
         }
