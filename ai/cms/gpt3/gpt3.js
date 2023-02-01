@@ -27,6 +27,6 @@ export class gpt3 extends Component {
         })
     }
     submit(prompt, size) {
-        this.completion.getCompletion(prompt, size)
+        this.completion.get(prompt, size)
     }
 }
