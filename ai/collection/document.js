@@ -53,13 +53,13 @@ export async function getByName(collection, name) {
         })
 }
 
-export const utils = {
-    sessionObject: (key) => {
-        let t = sessionStorage.getItem(key)
-        if (t && t !== 'undefined') {
-            return JSON.parse(t)
-        } else {
-            return false
-        }
-    }
-}
+// export const utils = {
+//     sessionObject: (key) => {
+//         let t = sessionStorage.getItem(key)
+//         if (t && t !== 'undefined') {
+//             return JSON.parse(t)
+//         } else {
+//             return false
+//         }
+//     }
+// }

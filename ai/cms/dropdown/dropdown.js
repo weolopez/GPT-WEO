@@ -80,6 +80,7 @@ export class dropdown extends Component {
 
         //simulate a click on the first option
         this.element.selectedIndex = 1
+        if (this.element.options.length < 1) return
         callback(this.element.options[1].innerHTML, this.element.options[1].value)
 
     }
