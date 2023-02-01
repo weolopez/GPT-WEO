@@ -7,16 +7,16 @@ let outlineTemplate = ` create an outline using the following json format
         "Word Count": 1500,
         "Body": [
             {"Introduction": {
-                "Word Count": <count>,
+                "Minimum Word Count": <count>,
                 "Description": ""
             }},
             {"Chapter <number>": {
-                "Word Count": <count>,
+                "Minimum Word Count": <count>,
                 "Description": ""
             }},
             ...
             {"Conclusion": {
-                "Word Count": <count>,
+                "Minimum Word Count": <count>,
                 "Description": ""
             }}
         ]
@@ -60,12 +60,20 @@ export class Completion {
         this.superCallback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
     }
 
-    getCompletion(myPrompt, max_tokens, isStream = true) {
+    get(myPrompt, max_tokens) {
         if (max_tokens > 350) {
-            this.getLongCompletion(myPrompt, max_tokens)
+            this.getLongCompletion(myPrompt, 4000)
             return
+        } else {
+            this.getCompletion(myPrompt, max_tokens)
         }
-        max_tokens = max_tokens - myPrompt.length
+    }
+
+
+    getCompletion(myPrompt, max_tokens, isStream = true) {
+        max_tokens = max_tokens - (myPrompt.length/4)
+        //convert max_tokens from float to integer
+        max_tokens = Math.floor(max_tokens)
 
         const jsonDecoder = this.makeJsonDecoder()
         const eventStream = this.makeWriteableEventStream(this.eventTarget)
