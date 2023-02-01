@@ -3,7 +3,7 @@ import { getCompletionConfig } from './aiModels.js'
 let outlineTemplate = ` create an outline using the following json format 
 {
     "Article": {
-        "Title": "",
+        "Title": "#{prompt}",
         "Word Count": 1500,
         "Body": [
             {"Introduction": {
@@ -41,9 +41,11 @@ export class Completion {
         if (this.longCompletion) this.longCompletionCallback(data)
         else this.superCallback(data)
     }
-    getLongCompletion(myPrompt, max_tokens) {
+    getLongCompletion(prompt, max_tokens) {
         this.longCompletion = true
-        this.getCompletion(myPrompt+outlineTemplate, max_tokens, false)
+        //apply prompt to outlineTemplate
+        outlineTemplate = outlineTemplate.replace('#{prompt}', prompt)
+        this.getCompletion(outlineTemplate, max_tokens, false)
     }
     longCompletionCallback(data) {
         let outline
