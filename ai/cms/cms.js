@@ -1,7 +1,7 @@
 // Description: CMS class to fetch data from the API
 
 import { Collection } from '/ai/collection/collection.js'
-import { utils } from '/ai/collection/document.js'
+// import { utils } from '/ai/collection/document.js'
 
 export class CMS {
     page = {}
@@ -24,7 +24,7 @@ export class CMS {
         }).then(response => response.json()).catch(() => {
             console.log("error");
         }).then((data) => {
-            sessionStorage.setItem(data.name, JSON.stringify(data))
+            // sessionStorage.setItem(data.name, JSON.stringify(data))
             return data
         })
     }
@@ -44,14 +44,14 @@ export class CMS {
     }
     async initComponents() {
 
-        this.page.data = utils.sessionObject(this.page.meta.id)
-        if (!this.page.data) {
+        // this.page.data = utils.sessionObject(this.page.meta.id)
+        // if (!this.page.data) {
             await this.cms.getByName(this.page.meta.id).then((data) => {
                 //save data to sessionStorage
-                sessionStorage.setItem(this.page.meta.id, JSON.stringify(data))
+                // sessionStorage.setItem(this.page.meta.id, JSON.stringify(data))
                 this.page.data = data
             })
-        }
+        // }
 
         //get all the elements with the cms class
         this.page.elements = document.getElementsByClassName('cms')

@@ -55,10 +55,11 @@ textarea {
 
 #historyOutput {
     width: 95%;
-    height: 85vh;
+    height: 80vh;
     /* background: white; */
     margin: 0 10px 10px 10px;
-    overflow: scroll
+    overflow: scroll;
+    padding: 10px;
 }
 
 /* #submit {
@@ -85,4 +86,8 @@ textarea {
     position: absolute;
     top: -453px;
     position: absolute;
+}
+
+#clipboard {
+    padding: 20px;
 }

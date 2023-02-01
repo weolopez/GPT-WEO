@@ -1,18 +1,17 @@
-import { Component } from '/ai/cms/component.js'
-import { html } from '/ai/cms/tabs/html.js'
+import { Component } from '../componentInterface.js'
+import { html } from './html.js'
 
-export class tabs extends Component {
+export class tabs  extends Component {
     currentTabID
 
     constructor(element, cms, callback) {
         super(element, cms, callback)
-        //get children of element
-        var children = this.element.children
-        //create ul element
+
         var ul = document.createElement('ul')
         ul.className = 'nav nav-tabs'
-        //for each child of element
+        var children = this.element.children
         for (var i = 0; i < children.length; i++) {
+            
             //create li element
             var li = document.createElement('li')
             li.className = 'nav-item'
@@ -34,19 +33,24 @@ export class tabs extends Component {
             //add li to ul
             ul.appendChild(li)
         }
-        //add ul to top of element
-        this.element.insertBefore(ul, this.element.firstChild)
+        this.element.insertBefore(ul, this.element.children[0])
 
-        if (window.location.href.split('#')[1]){
-            this.setTab(window.location.href.split('#')[1])
-        } else {
-            this.setTab(children[1].getAttribute('id'))
-        }
-        // if (window.location.href.split('#')[1]){
-        //     this.setTab(window.location.href.split('#')[1])
-        // } else {
-        //     this.setTab(children[1].getAttribute('id'))
-        // }
+    var div = document.createElement('div')
+    div.innerHTML = html 
+    this.element.appendChild(div)
+    
+    if (window.location.href.split('#')[1]){
+        this.setTab(window.location.href.split('#')[1])
+    } else {
+        this.setTab(children[1].getAttribute('id'))
+    }
+    // const hash = window.location.hash;
+    // if (hash) {
+    //   const tab = document.querySelector(hash+'i');
+    //   tab.click()
+    //   //set tab to target
+    // }
+
     }
     setTab(id) {
         //for children of ul find a with href = "#id" and set class to active

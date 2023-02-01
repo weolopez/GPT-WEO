@@ -34,6 +34,7 @@ router.get("/:collection/:id", async (req, res) => {
 });
 
 router.post("/:collection", async (req, res) => {
+    // console.log(req.body);
     res.send(await post(req.params.collection, req.body));
 });
 

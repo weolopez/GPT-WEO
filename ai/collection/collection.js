@@ -11,25 +11,25 @@ export class Collection {
     }
 
     get(id = '') {
-        let data = localStorage.getItem(this.collection + id);
-        if (data == null || data.length < 3) {
+        // let data = localStorage.getItem(this.collection + id);
+        // if (data == null || data.length < 3) {
             return get(this.collection, id)
                 .then(data => {
-                    localStorage.setItem(this.collection + id, JSON.stringify(data))
+                    // localStorage.setItem(this.collection + id, JSON.stringify(data))
                     if (this.callback) this.callback(data)
                     return data
                 })
-        } else {
-            if (this.callback) this.callback(JSON.parse(data))
-            return JSON.parse(data)
-        }
+        // } else {
+        //     if (this.callback) this.callback(JSON.parse(data))
+        //     return JSON.parse(data)
+        // }
     }
 
     //function to post data to the API
     async add(obj) {
         return await post(this.collection, obj).then(data => {
             if (this.callback) {
-                localStorage.removeItem(this.collection)
+            //     localStorage.removeItem(this.collection)
                 this.get(data._id)
             }
             return data
@@ -39,8 +39,8 @@ export class Collection {
     async update(obj) {
         put(this.collection, obj).then(data => {
             if (this.callback) {
-                localStorage.removeItem(this.collection + obj._id)
-                localStorage.removeItem(this.collection)
+            //     localStorage.removeItem(this.collection + obj._id)
+            //     localStorage.removeItem(this.collection)
                 this.get(obj._id)
             }
         })
@@ -48,8 +48,8 @@ export class Collection {
     async upsert(obj, arrayName) {
         upsert(this.collection, arrayName, obj).then(data => {
             if (this.callback) {
-                localStorage.removeItem(this.collection + obj._id)
-                localStorage.removeItem(this.collection)
+            //     localStorage.removeItem(this.collection + obj._id)
+            //     localStorage.removeItem(this.collection)
                 this.get(obj._id)
             }
         })
@@ -57,8 +57,8 @@ export class Collection {
     async remove(obj) {
         remove(this.collection, obj).then(data => {
             if (this.callback) {
-                localStorage.removeItem(this.collection+obj._id)
-                localStorage.removeItem(this.collection)
+            //     localStorage.removeItem(this.collection+obj._id)
+            //     localStorage.removeItem(this.collection)
                 this.get()
             }
         })

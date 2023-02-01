@@ -31,11 +31,13 @@ export async function getApp() {
   const app = express();
 
 
-  app.use(favicon(root+'/ai/favicon.ico'))
+  app.use(favicon(root+'/ai/favicon.svg'))
   const port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
   // create a route for static html files
   app.use("/ai", express.static(root + "/ai"));
+
+  // app.use("/", indexRouter);
   app.use("/test", express.static(root + "/test"));
 
   // view engine setup
@@ -51,7 +53,6 @@ export async function getApp() {
 
   app.locals.format = format;
 
-  app.use("/", indexRouter);
   app.use("/weo", weoRouter);
   app.use("/crud", crudRouter);
   app.use("/js", express.static(root + "/node_modules/bootstrap/dist/js")); // redirect bootstrap JS
