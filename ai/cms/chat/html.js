@@ -14,17 +14,6 @@ export const html=` <style>
     right: 0;
     bottom: 0;
     top: 0;
-    -webkit-touch-callout: none;
-    /* iOS Safari */
-    -webkit-user-select: none;
-    /* Chrome/Safari/Opera */
-    -khtml-user-select: none;
-    /* Konqueror */
-    -moz-user-select: none;
-    /* Firefox */
-    -ms-user-select: none;
-    /* IE/Edge */
-    user-select: none;
   }
 
   form.chat span.spinner {
@@ -301,6 +290,7 @@ export const html=` <style>
   #chatInput {
     position: absolute;
     bottom: 0;
+    left: 0;
     width: 100vw;
     height: 56px;
   }
@@ -314,8 +304,5 @@ export const html=` <style>
   <div class="messages" id="collabthread">
     
   </div>
-  <!--input id="chatSubmit" type="submit" value="Send" -->
-  </form>
 </div>
-<input id="chatInput" type="text"  placeholder="Your message">
 `
