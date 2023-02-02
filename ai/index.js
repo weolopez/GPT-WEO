@@ -157,29 +157,57 @@ function saveKey() {
   location.reload();
 }
 
-function displayHistory(id) {
+function displayHistory(userID) {
+
   let chat = document.getElementById('historyOutput')
   chat.innerHTML = ''
   let chatCollection = new Collection('histories')
-  chatCollection.getByName(id).then(out => {
-    // console.log('out', out)
+  chatCollection.getByName(userID).then(out => {
+    // get by id=historyList
+    let historyList = document.getElementById('historyList')
+    historyList.innerHTML = ''
     let counter = 0
     out.history.forEach(item => {
       counter++
       let div = document.createElement('div')
-      div.id = `prompt${counter}`
-      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p  id="summary${counter}" style="display: none">AI: ${item.summary}</p>`
-      else div.innerHTML = `<p>${item.from}:${item.config.prompt}</p><p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
+      let li = document.createElement('li')
+      // set data-objid to item._id
+      li.setAttribute('data-objid', item._id)
+      //set li class to blockItem
+      li.className = 'blockItem'
+      //add a delete font awesome icon to li
+      li.id = `prompt${counter}`
+      let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
+      if (item.prompt) {
+        li.innerHTML =`${item.prompt}    `+del
+        div.innerHTML = `<p  id="summary${counter}" style="display: none">AI: ${item.summary}</p>`
+      }
+      else {
+        div.innerHTML = `<p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
+        li.innerHTML = `${item.config.prompt}    `+del
+      }
       //on click of prompt${counter} toggle showing summary${counter} 
-      div.addEventListener('click', (event) => {
-        //get id of event target
+      li.addEventListener('click', (event) => {
+        //get source of event
+        let sourceElement = event.target
+
         let id = event.currentTarget.id
         //get the number of the prompt
         let counter = id.substring(id.indexOf('t') + 1)
         let summary = document.getElementById(`summary${counter}`)
+        if (sourceElement.id === `delete${counter}`) {
+          //from out.history remove the index of counter
+          out.history.splice(counter - 1, 1) 
+          chatCollection.update(out)
+          //reload page
+          displayHistory(userID)
+        }
+
         if (summary.style.display === 'none') summary.style.display = 'block'
         else summary.style.display = 'none'
+        
       })
+      historyList.appendChild(li)
       chat.appendChild(div)
     })
   })

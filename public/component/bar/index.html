@@ -7,7 +7,15 @@
 
   </head>
   <body>
-    <tabs id="mainBar" class="component bar" data-module="bar">
+    <main class="row">
+      <sidebar id="mysidebar" data-module="sidebar" class="component sidebar weobar-block" style="width:25%">
+        <h3 class="weobar-item">Menu</h3>
+        
+        <a href="#" class="weobar-item weobutton">Link 1</a>
+        <a href="#" class="weobar-item weobutton">Link 2</a>
+        <a href="#" class="weobar-item weobutton">Link 3</a>
+      </sidebar>
+      <tabs id="mainTabs" class="component tabs" data-module="tabs">
         <div id="app1" class="paper" name="First Tab">Hello</div>
         <div id="app2" class="paper" name="Second Tab">Weo</div>
         <div id="app3" class="paper" name="Theird Tab">World</div>
@@ -17,7 +25,8 @@
         <div id="app7" class="paper" name="Seventh Tab">Hello</div>
         <div id="app8" class="paper" name="Eighth Tab">Weo</div>
         <div id="app9" class="paper" name="Nineth Tab">World</div>
-    </tabs>
+      </tabs>
+    </main>
   </body>
   <style>
 
@@ -49,6 +58,7 @@
   
   body {
     background-color: rgb(68 70 84) !important;
+    margin: 0;
   }
   </style>
   <script type="module">

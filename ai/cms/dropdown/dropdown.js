@@ -10,13 +10,11 @@ export class dropdown extends Component {
 
         if (this.collectionName) {
             this.collection = new Collection(this.collectionName, (data) => {
-                this.setOptions(data, (key, value) => {
-                    // console.log('generic callback', key, value)
-                })
+                this.setOptions(data)
             })
             this.collection.get()
         } else if (cms.page.data[this.id]) {
-            this.setOptions(cms.page.data[this.id], this.callback)
+            this.setOptions(cms.page.data[this.id])
         } else {
             console.warn('no data found for dropdown', this.id)
         }
@@ -29,19 +27,9 @@ export class dropdown extends Component {
         }
         //TODO add support for CMS page data
     }
-    setOptions(options, callback) {
+    setOptions(options) {
         this.data = options
-
-        //if options is a string then return
         if (typeof this.data === 'string') return
-        //create the first option select as the default
-        // let option = document.createElement('option')
-        // option.value = ''
-        // option.innerHTML = this.id
-        // this.element.appendChild(option)
-        
-        this.callback = callback
-        // if options is an object then get the values
         if (typeof this.data === 'object' &&
             !Array.isArray(this.data) &&
             this.data !== null) {
