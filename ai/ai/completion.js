@@ -8,7 +8,7 @@ let outlineTemplate = ` create an outline using the following json format
         "Body": [
             {"Introduction": {
                 "Minimum Word Count": <count>,
-                "Description": ""
+                "Details to be used who what when where": ""
             }},
             {"Chapter <number>": {
                 "Minimum Word Count": <count>,
@@ -45,7 +45,7 @@ export class Completion {
         this.longCompletion = true
         //apply prompt to outlineTemplate
         outlineTemplate = outlineTemplate.replace('#{prompt}', prompt)
-        this.getCompletion(outlineTemplate, max_tokens, false)
+        this.getCompletion(' Descriptions should be no less than 25 words, introductions should be 100 words '+outlineTemplate, max_tokens, false)
     }
     longCompletionCallback(data) {
         let outline
@@ -56,8 +56,15 @@ export class Completion {
             console.log(data.text)
         } 
         this.longCompletion = false
+        let introduction = ''
         outline.Article.Body.forEach( (Body, index) => {
-            this.getCompletion('This is part of '+outline.Article.Title+' '+JSON.stringify(Body), 3000, false)
+            if (index === 0) {
+                introduction = Body.Introduction.Description + ' '
+                this.getCompletion('This is the introduction to '+outline.Article.Title+' '+JSON.stringify(Body), 4000, false)
+            }
+
+            else
+            this.getCompletion('This is part of '+outline.Article.Title+' the introduction was '+introduction+JSON.stringify(Body), 4000, false)
         })
         this.superCallback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
     }

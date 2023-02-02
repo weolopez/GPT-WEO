@@ -1,12 +1,27 @@
 import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
 import { upsert } from '/ai/collection/document.js'
+import { popup } from '/ai/cms/popup/popup.js'
 
 let characterCount = 0;
 let maxLength = 1000
 let cms = new CMS()
 let persona;
 let mediaType;
+let popupObj = new popup();
+
+let addPersona = document.getElementById('addPersona')
+addPersona.addEventListener('click', (event) => {
+  popupObj.show([{ id: 'persona', label: 'New Persona' }], (result) => {
+    let p = new Collection('persona')
+    p.get().then((data) => {
+      if (!data.find((item) => item.name == result.persona)) {
+        p.add({ name: result.persona })
+      }
+    })
+  })
+})
+
 await cms.initComponents().then(() => {
   cms.page.componentObject.firstTabs.setCallback((tabid) => {
     if (tabid == 'chat') {
@@ -80,9 +95,9 @@ function submit() {
   // document.getElementById("summary").value = ''
 
   let prompt = clipboard.value
-  let size = mediaType.tokens 
-  cms.page.componentObject.summary.submit(prompt,size)
-      running = false;
+  let size = mediaType.tokens
+  cms.page.componentObject.summary.submit(prompt, size)
+  running = false;
 }
 
 // on click of copy button add the text from the summary paragraph to the clipboard
@@ -138,20 +153,20 @@ function displayHistory(userID) {
       //add a delete font awesome icon to li
       li.id = `prompt${counter}`
       let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
-      if (item.prompt) li.innerHTML =`${item.prompt} `+del
-      else li.innerHTML = `${item.config.prompt}    `+del
+      if (item.prompt) li.innerHTML = `${item.prompt} ` + del
+      else li.innerHTML = `${item.config.prompt}    ` + del
       li.addEventListener('click', (event) => {
         let id = event.currentTarget.id
         let sourceElement = event.target
         let counter = id.substring(id.indexOf('t') + 1)
         let item = JSON.parse(event.currentTarget.dataset.objid)
         if (sourceElement.id === `delete${counter}`) {
-          out.history.splice(counter - 1, 1) 
+          out.history.splice(counter - 1, 1)
           historyCollection.update(out)
           displayHistory(userID)
         }
         let historyOutput = document.getElementById(`historyOutput`)
-        if (item.prompt) historyOutput.value = JSON.stringify(item,2,2)
+        if (item.prompt) historyOutput.value = JSON.stringify(item, 2, 2)
       })
       historyList.appendChild(li)
     })

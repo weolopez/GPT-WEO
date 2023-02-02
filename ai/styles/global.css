@@ -214,3 +214,12 @@ footer {
     margin-top: 55px;
     padding: 13px;
 }
+.actionIcon {
+  font-size: 12px; 
+  color: #fff; 
+  cursor: pointer;
+}
+
+.actionIcon:hover {
+  font-size: 24px; 
+}
