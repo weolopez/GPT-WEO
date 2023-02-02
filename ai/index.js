@@ -9,51 +9,42 @@ let persona;
 let mediaType;
 await cms.initComponents().then(() => {
   cms.page.componentObject.firstTabs.setCallback((tabid) => {
-    // console.log('firstTabs callback', tabid)
-    // hide footer if tabid = 'chat' or 'history'
-    // if (tabid == 'chat' || tabid == 'historyOutput') {
-      // document.getElementById('footer').style.display = 'none'
-      // get #chatInput and set focus
-      // document.getElementById('chatInput').focus()
-    // } else {
-      // document.getElementById('footer').style.display = 'flex'
-    // }
+    if (tabid == 'chat') {
+      document.getElementById('chatInput').style.display = 'block'
+    } else {
+      document.getElementById('chatInput').style.display = 'none'
+    }
+
     if (tabid == 'summary') {
       document.getElementById('copy').style.display = 'block'
     } else {
       document.getElementById('copy').style.display = 'none'
     }
-    //only display submit button if tabid = 'promptArea'
     if (tabid == 'promptArea') {
       document.getElementById('submit').style.display = 'block'
     } else {
       document.getElementById('submit').style.display = 'none'
     }
   })
-
   cms.page.componentObject.firstTabs.setTab(cms.page.componentObject.firstTabs.currentTabID)
   cms.page.componentObject.logo.setCallback((event) => {
-    // get element with id = sidebar and toggle the class 'visible'
     document.getElementById('sidebar').classList.toggle('visible')
   })
-
-
   cms.page.componentObject.media.setCallback((key, value) => {
     // console.log('mediaType callback', key, value)
     mediaType = JSON.parse(value)
     maxLength = Number(mediaType.tokens)
     clipboard.value = mediaType.name + persona
   })
-
   cms.page.componentObject.persona.setCallback((key, value) => {
-    // console.log('persona callback', key, value)
     value = JSON.parse(value)
     persona = value
     clipboard.value = mediaType.name + persona.prompt
-    // displayHistory(persona.name)
-  })
-  cms.page.componentObject.history.setCallback((key, value) => {
     displayHistory(key)
+  })
+  cms.page.componentObject.history.setCallback((userId, value) => {
+    window.location.hash = '#historyOutput'
+    displayHistory(userId)
   })
 
   if (!cms.page.componentObject.chat.user) {
@@ -63,11 +54,11 @@ await cms.initComponents().then(() => {
     let userIDSubmit = document.getElementById("userIDSubmit");
     userIDSubmit.addEventListener("click", cms.page.componentObject.chat.userIDSubmit.bind(cms.page.componentObject.chat))
   }
+
   cms.page.componentObject.chat.setCallback((text) => {
     console.log('chat callback', text)
     // displayHistory(text)
   })
-
 })
 
 
@@ -92,26 +83,7 @@ function submit() {
   let size = mediaType.tokens 
   cms.page.componentObject.summary.submit(prompt,size)
       running = false;
-      // var historyEntry = {
-      //   prompt: prompt,
-      //   completion: completion,
-      //   persona: 'weo'
-      // }
-      // historyCollection.add(historyEntry).then(hist => {
-      //   // console.log('history added', hist)
-      //   document.getElementById("summary").value += "\n\n"+hist._id
-      // })
 }
-
-// function getCollectionHistory() {
-//   var token = localStorage.getItem('openai_key')
-//   if (token == null) return
-//   token = 'sk' + token.substring(token.indexOf('-') + 1)
-//   return new Collection(token, (history) => {
-//     // console.log('history: ', history)
-//   })
-// }
-// var historyCollection = getCollectionHistory()
 
 // on click of copy button add the text from the summary paragraph to the clipboard
 let copyButton = document.getElementById('copy')
@@ -126,89 +98,62 @@ function copy() {
       persona: persona,
       media: mediaType,
       prompt: clipboard.value,
+      date: new Date().toISOString(),
       summary: summary
     }
   }
-
   upsert('history', 'history', obj).then(out =>
     console.log('upserted', out))
 }
 
-
-
-// if localstorage has 'openai_key' hide div with id=openai_key_div
 if (localStorage.getItem('openai_key')) {
   document.getElementById('openai_key_div').style.display = 'none';
-  // document.getElementById('not_openai_key_div').style.display = 'block';
 }
-// if localstorage doesn't have 'openai_key' show div with id=openai_key_div
 else {
   document.getElementById('openai_key_div').style.display = 'block';
-  // document.getElementById('not_openai_key_div').style.display = 'none';
 }
-
-// on click of button with id=saveKey, call saveKey function
 document.getElementById('saveKey').addEventListener('click', saveKey);
-// on click of button with id=saveKey, set localstorage 'openai_key' to value of input with id=openai_key
 function saveKey() {
   localStorage.setItem('openai_key', document.getElementById('openai_key').value);
   document.getElementById('openai_key_div').style.display = 'none';
-  //reload page
   location.reload();
 }
-
+// let userID
 function displayHistory(userID) {
-
-  let chat = document.getElementById('historyOutput')
-  chat.innerHTML = ''
-  let chatCollection = new Collection('histories')
-  chatCollection.getByName(userID).then(out => {
+  let historyCollection = new Collection('histories')
+  historyCollection.getByName(userID).then(out => {
+    if (out.completion) {
+      cms.page.componentObject.chat.setUser(userID, out)
+      return
+    }
     // get by id=historyList
     let historyList = document.getElementById('historyList')
     historyList.innerHTML = ''
     let counter = 0
     out.history.forEach(item => {
       counter++
-      let div = document.createElement('div')
       let li = document.createElement('li')
-      // set data-objid to item._id
-      li.setAttribute('data-objid', item._id)
-      //set li class to blockItem
+      li.setAttribute('data-objid', JSON.stringify(item))
       li.className = 'blockItem'
       //add a delete font awesome icon to li
       li.id = `prompt${counter}`
       let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
-      if (item.prompt) {
-        li.innerHTML =`${item.prompt}    `+del
-        div.innerHTML = `<p  id="summary${counter}" style="display: none">AI: ${item.summary}</p>`
-      }
-      else {
-        div.innerHTML = `<p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
-        li.innerHTML = `${item.config.prompt}    `+del
-      }
-      //on click of prompt${counter} toggle showing summary${counter} 
+      if (item.prompt) li.innerHTML =`${item.prompt} `+del
+      else li.innerHTML = `${item.config.prompt}    `+del
       li.addEventListener('click', (event) => {
-        //get source of event
-        let sourceElement = event.target
-
         let id = event.currentTarget.id
-        //get the number of the prompt
+        let sourceElement = event.target
         let counter = id.substring(id.indexOf('t') + 1)
-        let summary = document.getElementById(`summary${counter}`)
+        let item = JSON.parse(event.currentTarget.dataset.objid)
         if (sourceElement.id === `delete${counter}`) {
-          //from out.history remove the index of counter
           out.history.splice(counter - 1, 1) 
-          chatCollection.update(out)
-          //reload page
+          historyCollection.update(out)
           displayHistory(userID)
         }
-
-        if (summary.style.display === 'none') summary.style.display = 'block'
-        else summary.style.display = 'none'
-        
+        let historyOutput = document.getElementById(`historyOutput`)
+        if (item.prompt) historyOutput.value = JSON.stringify(item,2,2)
       })
       historyList.appendChild(li)
-      chat.appendChild(div)
     })
   })
 }

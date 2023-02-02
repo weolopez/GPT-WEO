@@ -25,8 +25,18 @@ export class chat extends Component {
         }
 
     }
-    setUser(user) {
+    setUser(user, chatHistoryData) {
         this.user = user
+        let collabthread = document.getElementById("collabthread");
+        collabthread.innerHTML = ''
+        chatHistoryData.history.forEach( dialog => {
+            let ai = dialog.completion.choices[0].text
+            let me = dialog.config.prompt
+            let dateMade = new Date(dialog.completion.created*1000).toISOString()
+            this.addMessage(me, 'out', dateMade)
+            this.addMessage(ai, 'in', dateMade)
+        })
+
     }
     keypress (event) {
         //check if enter key is pressed using event key code
@@ -67,15 +77,16 @@ export class chat extends Component {
     randomDate(start, end) {
         return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
     }
-    addMessage(txt, direction) {
-        //get the value of the input field
-        // get formatted date
-        let date = new Date().toISOString();
+    addMessage(txt, direction, dateMade) {
+        //convert dateMade in epoc format to ISO string format
+        let date = dateMade || new Date().toISOString();
         let message = ` <div class="message" >
                             <div class="${direction}">
-                                <p class="m-0">
-                                ${txt}
-                                </p>
+                                <pre class="m-0" style="color:white;background: transparent;white-space: pre-wrap;       /* css-3 */
+                                white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+                                white-space: -pre-wrap;      /* Opera 4-6 */
+                                white-space: -o-pre-wrap;    /* Opera 7 */
+                                word-wrap: break-word; ">${txt.trim()}</pre>
                                 <date><b> ${date} </b> </date>
                             </div>
                         </div>
