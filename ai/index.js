@@ -58,7 +58,9 @@ await cms.initComponents().then(() => {
     displayHistory(key)
   })
   cms.page.componentObject.history.setCallback((userId, value) => {
-    window.location.hash = '#historyOutput'
+    //if hash is not chat change it to history
+    if (window.location.hash != '#chat')
+        window.location.hash = '#historyOutput'
     displayHistory(userId)
   })
 
@@ -137,7 +139,7 @@ function saveKey() {
 function displayHistory(userID) {
   let historyCollection = new Collection('histories')
   historyCollection.getByName(userID).then(out => {
-    if (out.completion) {
+    if (out.history[0].completion) {
       cms.page.componentObject.chat.setUser(userID, out)
       return
     }
