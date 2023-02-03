@@ -58,6 +58,9 @@ await cms.initComponents().then(() => {
     maxLength = Number(mediaType.tokens)
     clipboard.value = mediaType.name + persona
   })
+
+  myHistory.addCollection(cms.page.componentObject.history.collection)
+
   cms.page.componentObject.persona.addCallback( result => {
     let key = result.key
     let value = result.value
@@ -67,7 +70,6 @@ await cms.initComponents().then(() => {
     myHistory.displayHistory(key)
   })
 
-  myHistory.addCollection(cms.page.componentObject.history.collection)
   cms.page.componentObject.history.addCallback(result => {
     let userId = result.key
     let value = result.value
