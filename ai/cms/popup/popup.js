@@ -1,6 +1,6 @@
 import { html } from '/ai/cms/popup/html.js'
 
-export class popup {
+export class Popup {
     popup
     constructor() {
         document.body.innerHTML += html
@@ -11,7 +11,7 @@ export class popup {
         document.addEventListener('openModel', function (e) {
             console.log(e.detail.id)
             let popup = new bootstrap.Modal(document.getElementById('myModal'), options)
-             popup.show()
+            popup.show()
         })
 
     }
@@ -38,7 +38,7 @@ export class popup {
             div.appendChild(input)
             modalBody.appendChild(div)
         })
-            
+
         let popup = new bootstrap.Modal(document.getElementById('myModal'), options)
         popup.show()
         let myModal = document.getElementById('myModal')
@@ -54,5 +54,12 @@ export class popup {
             callback(obj)
         })
     }
+    getData(key) {
+        if (localStorage.getItem(key)) return
+        this.show([{ id: key, label: key }], (result) => {
+            localStorage.setItem(key, result[key])
+        })
+    }
+
 
 }
