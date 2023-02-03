@@ -2,6 +2,7 @@ import { Component } from '/ai/cms/component.js'
 import { Collection } from '/ai/collection/collection.js'
 
 export class dropdown extends Component {
+    collection
     constructor(element, cms, callback) {
         super(element, cms, callback)
 
@@ -56,20 +57,22 @@ export class dropdown extends Component {
         this.element.addEventListener('change', (event)=>{
             let target = event.target
             let selectedIndex = target.selectedIndex
-            let selectedValue = target.options[selectedIndex].value
-            let selectedKey = target.options[selectedIndex].innerHTML
-            this.callback(selectedKey, selectedValue)
+            let value = target.options[selectedIndex].value
+            let key = target.options[selectedIndex].innerHTML
+            this.callback({key, value})
         })
         //call the callback with the first option
         // this.callback(this.element.options[0].innerHTML, this.element.options[0].value)
     }
-    setCallback(callback) {
-        this.callback = callback
+    addCallback(callback) {
+        super.addCallback(callback)
 
         //simulate a click on the first option
         this.element.selectedIndex = 1
         if (this.element.options.length < 1) return
-        callback(this.element.options[1].innerHTML, this.element.options[1].value)
-
+        
+        let value = this.element.options[1].value
+        let key = this.element.options[1].innerHTML
+        callback({key, value})
     }
 }
