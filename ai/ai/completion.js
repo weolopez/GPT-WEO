@@ -27,19 +27,24 @@ export class Completion {
     eventTarget
     eventStream
     longCompletion = false
+    callbacks = []
     constructor(callback) {
-        this.superCallback = callback
+        this.addCallback(callback)
         this.eventTarget = new EventTarget()
         this.eventTarget.addEventListener('text_completion', (messageEvent) => {
             this.callback(messageEvent.data[0])
         })
     }
-    setCallback(callback) {
-        this.superCallback = callback
+    addCallback(callback) {
+        if (callback) this.callbacks.push(callback)
     }
     callback(data) {
         if (this.longCompletion) this.longCompletionCallback(data)
-        else this.superCallback(data)
+        else {
+            this.callbacks.forEach(callback => {
+                callback(data)
+            })
+        }
     }
     getLongCompletion(prompt, max_tokens) {
         this.longCompletion = true
@@ -66,7 +71,10 @@ export class Completion {
             else
             this.getCompletion('This is part of '+outline.Article.Title+' the introduction was '+introduction+JSON.stringify(Body), 4000, false)
         })
-        this.superCallback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
+
+        this.callbacks.forEach(callback => {
+            callback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
+        })
     }
 
     get(myPrompt, max_tokens) {

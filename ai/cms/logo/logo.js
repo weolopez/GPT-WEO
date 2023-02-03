@@ -8,7 +8,7 @@ export class logo extends Component {
 
         // on click event callback
     }
-    setCallback(callback) {
+    addCallback(callback) {
         this.callback = callback
         this.element.addEventListener('click', this.callback)
     }
