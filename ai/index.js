@@ -1,7 +1,7 @@
 import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
 import { upsert } from '/ai/collection/document.js'
-import { popup } from '/ai/cms/popup/popup.js'
+import { Popup } from '/ai/cms/popup/popup.js'
 import { History } from '/ai/app/history/history.js'
 
 let characterCount = 0;
@@ -9,7 +9,7 @@ let maxLength = 1000
 let cms = new CMS()
 let persona;
 let mediaType;
-let popupObj = new popup();
+let popupObj = new Popup();
 let myHistory = new History();
 
 let addPersona = document.getElementById('addPersona')
@@ -23,6 +23,9 @@ addPersona.addEventListener('click', (event) => {
     })
   })
 })
+
+popupObj.getData('openai_key')
+
 
 await cms.initComponents().then(() => {
   cms.page.componentObject.firstTabs.addCallback((tabid) => {
@@ -61,7 +64,7 @@ await cms.initComponents().then(() => {
     value = JSON.parse(value)
     persona = value
     clipboard.value = mediaType.name + persona.prompt
-    displayHistory(key)
+    myHistory.displayHistory(key)
   })
 
   myHistory.addCollection(cms.page.componentObject.history.collection)
@@ -133,18 +136,6 @@ function copy() {
     console.log('upserted', out))
 }
 
-if (localStorage.getItem('openai_key')) {
-  document.getElementById('openai_key_div').style.display = 'none';
-}
-else {
-  document.getElementById('openai_key_div').style.display = 'block';
-}
-document.getElementById('saveKey').addEventListener('click', saveKey);
-function saveKey() {
-  localStorage.setItem('openai_key', document.getElementById('openai_key').value);
-  document.getElementById('openai_key_div').style.display = 'none';
-  location.reload();
-}
 // let userID
 // function displayHistory(userID) {
 //   let historyCollection = new Collection('histories')
