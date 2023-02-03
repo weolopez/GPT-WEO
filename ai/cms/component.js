@@ -2,13 +2,13 @@ export class Component {
     id
     cms
     element
-    callback
+    callbacks=[]
     data
     constructor(element, cms, callback, html) {
         this.id = element.id
         this.cms = cms
         this.element = element
-        this.callback = callback
+        this.addCallback(callback)
         if (html) {
             let div = document.createElement('div')
             div.innerHTML = html
@@ -18,8 +18,12 @@ export class Component {
     save(data) {
         this.cms.save()
     }
-    setCallback(callback) {
-        this.callback = callback
+    addCallback(callback) {
+        if (callback) this.callbacks.push(callback)
     }
-    
+    callback(data) {
+        this.callbacks.forEach(callback => {
+            callback(data)
+        })
+    }
 }

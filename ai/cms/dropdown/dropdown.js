@@ -2,6 +2,7 @@ import { Component } from '/ai/cms/component.js'
 import { Collection } from '/ai/collection/collection.js'
 
 export class dropdown extends Component {
+    collection
     constructor(element, cms, callback) {
         super(element, cms, callback)
 
@@ -10,13 +11,11 @@ export class dropdown extends Component {
 
         if (this.collectionName) {
             this.collection = new Collection(this.collectionName, (data) => {
-                this.setOptions(data, (key, value) => {
-                    // console.log('generic callback', key, value)
-                })
+                this.setOptions(data)
             })
             this.collection.get()
         } else if (cms.page.data[this.id]) {
-            this.setOptions(cms.page.data[this.id], this.callback)
+            this.setOptions(cms.page.data[this.id])
         } else {
             console.warn('no data found for dropdown', this.id)
         }
@@ -29,19 +28,9 @@ export class dropdown extends Component {
         }
         //TODO add support for CMS page data
     }
-    setOptions(options, callback) {
+    setOptions(options) {
         this.data = options
-
-        //if options is a string then return
         if (typeof this.data === 'string') return
-        //create the first option select as the default
-        // let option = document.createElement('option')
-        // option.value = ''
-        // option.innerHTML = this.id
-        // this.element.appendChild(option)
-        
-        this.callback = callback
-        // if options is an object then get the values
         if (typeof this.data === 'object' &&
             !Array.isArray(this.data) &&
             this.data !== null) {
@@ -68,20 +57,22 @@ export class dropdown extends Component {
         this.element.addEventListener('change', (event)=>{
             let target = event.target
             let selectedIndex = target.selectedIndex
-            let selectedValue = target.options[selectedIndex].value
-            let selectedKey = target.options[selectedIndex].innerHTML
-            this.callback(selectedKey, selectedValue)
+            let value = target.options[selectedIndex].value
+            let key = target.options[selectedIndex].innerHTML
+            this.callback({key, value})
         })
         //call the callback with the first option
         // this.callback(this.element.options[0].innerHTML, this.element.options[0].value)
     }
-    setCallback(callback) {
-        this.callback = callback
+    addCallback(callback) {
+        super.addCallback(callback)
 
         //simulate a click on the first option
         this.element.selectedIndex = 1
         if (this.element.options.length < 1) return
-        callback(this.element.options[1].innerHTML, this.element.options[1].value)
-
+        
+        let value = this.element.options[1].value
+        let key = this.element.options[1].innerHTML
+        callback({key, value})
     }
 }

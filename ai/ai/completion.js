@@ -3,20 +3,20 @@ import { getCompletionConfig } from './aiModels.js'
 let outlineTemplate = ` create an outline using the following json format 
 {
     "Article": {
-        "Title": "",
+        "Title": "#{prompt}",
         "Word Count": 1500,
         "Body": [
             {"Introduction": {
-                "Word Count": <count>,
-                "Description": ""
+                "Minimum Word Count": <count>,
+                "Details to be used who what when where": ""
             }},
             {"Chapter <number>": {
-                "Word Count": <count>,
+                "Minimum Word Count": <count>,
                 "Description": ""
             }},
             ...
             {"Conclusion": {
-                "Word Count": <count>,
+                "Minimum Word Count": <count>,
                 "Description": ""
             }}
         ]
@@ -27,23 +27,30 @@ export class Completion {
     eventTarget
     eventStream
     longCompletion = false
+    callbacks = []
     constructor(callback) {
-        this.superCallback = callback
+        this.addCallback(callback)
         this.eventTarget = new EventTarget()
         this.eventTarget.addEventListener('text_completion', (messageEvent) => {
             this.callback(messageEvent.data[0])
         })
     }
-    setCallback(callback) {
-        this.superCallback = callback
+    addCallback(callback) {
+        if (callback) this.callbacks.push(callback)
     }
     callback(data) {
         if (this.longCompletion) this.longCompletionCallback(data)
-        else this.superCallback(data)
+        else {
+            this.callbacks.forEach(callback => {
+                callback(data)
+            })
+        }
     }
-    getLongCompletion(myPrompt, max_tokens) {
+    getLongCompletion(prompt, max_tokens) {
         this.longCompletion = true
-        this.getCompletion(myPrompt+outlineTemplate, max_tokens, false)
+        //apply prompt to outlineTemplate
+        outlineTemplate = outlineTemplate.replace('#{prompt}', prompt)
+        this.getCompletion(' Descriptions should be no less than 25 words, introductions should be 100 words '+outlineTemplate, max_tokens, false)
     }
     longCompletionCallback(data) {
         let outline
@@ -54,18 +61,36 @@ export class Completion {
             console.log(data.text)
         } 
         this.longCompletion = false
+        let introduction = ''
         outline.Article.Body.forEach( (Body, index) => {
-            this.getCompletion('This is part of '+outline.Article.Title+' '+JSON.stringify(Body), 3000, false)
+            if (index === 0) {
+                introduction = Body.Introduction.Description + ' '
+                this.getCompletion('This is the introduction to '+outline.Article.Title+' '+JSON.stringify(Body), 4000, false)
+            }
+
+            else
+            this.getCompletion('This is part of '+outline.Article.Title+' the introduction was '+introduction+JSON.stringify(Body), 4000, false)
         })
-        this.superCallback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
+
+        this.callbacks.forEach(callback => {
+            callback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
+        })
     }
 
-    getCompletion(myPrompt, max_tokens, isStream = true) {
-        if (max_tokens > 3500) {
-            this.getLongCompletion(myPrompt, max_tokens)
+    get(myPrompt, max_tokens) {
+        if (max_tokens > 350) {
+            this.getLongCompletion(myPrompt, 4000)
             return
+        } else {
+            this.getCompletion(myPrompt, max_tokens)
         }
-        max_tokens = max_tokens - myPrompt.length
+    }
+
+
+    getCompletion(myPrompt, max_tokens, isStream = true) {
+        max_tokens = max_tokens - (myPrompt.length/4)
+        //convert max_tokens from float to integer
+        max_tokens = Math.floor(max_tokens)
 
         const jsonDecoder = this.makeJsonDecoder()
         const eventStream = this.makeWriteableEventStream(this.eventTarget)

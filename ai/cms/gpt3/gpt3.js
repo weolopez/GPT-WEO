@@ -19,7 +19,7 @@ export class gpt3 extends Component {
         this.setCallback(callback)
     }
     setCallback(callback) {
-        this.completion.setCallback( (data) => {
+        this.completion.addCallback( (data) => {
             //get element by id = summary and append the text
             if (data.finish_reason) console.log(data.finish_reason)
             document.getElementById('gptSummary').value += data.text
@@ -27,6 +27,6 @@ export class gpt3 extends Component {
         })
     }
     submit(prompt, size) {
-        this.completion.getCompletion(prompt, size)
+        this.completion.get(prompt, size)
     }
 }

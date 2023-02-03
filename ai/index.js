@@ -1,60 +1,78 @@
 import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
 import { upsert } from '/ai/collection/document.js'
+import { popup } from '/ai/cms/popup/popup.js'
+import { History } from '/ai/app/history/history.js'
 
 let characterCount = 0;
 let maxLength = 1000
 let cms = new CMS()
 let persona;
 let mediaType;
+let popupObj = new popup();
+let myHistory = new History();
+
+let addPersona = document.getElementById('addPersona')
+addPersona.addEventListener('click', (event) => {
+  popupObj.show([{ id: 'persona', label: 'New Persona' }], (result) => {
+    let p = new Collection('persona')
+    p.get().then((data) => {
+      if (!data.find((item) => item.name == result.persona)) {
+        p.add({ name: result.persona })
+      }
+    })
+  })
+})
+
 await cms.initComponents().then(() => {
-  cms.page.componentObject.firstTabs.setCallback((tabid) => {
-    // console.log('firstTabs callback', tabid)
-    // hide footer if tabid = 'chat' or 'history'
-    // if (tabid == 'chat' || tabid == 'historyOutput') {
-      // document.getElementById('footer').style.display = 'none'
-      // get #chatInput and set focus
-      // document.getElementById('chatInput').focus()
-    // } else {
-      // document.getElementById('footer').style.display = 'flex'
-    // }
+  cms.page.componentObject.firstTabs.addCallback((tabid) => {
+    if (tabid == 'chat') {
+      document.getElementById('chatInput').style.display = 'block'
+    } else {
+      document.getElementById('chatInput').style.display = 'none'
+    }
+
     if (tabid == 'summary') {
       document.getElementById('copy').style.display = 'block'
     } else {
       document.getElementById('copy').style.display = 'none'
     }
-    //only display submit button if tabid = 'promptArea'
     if (tabid == 'promptArea') {
       document.getElementById('submit').style.display = 'block'
     } else {
       document.getElementById('submit').style.display = 'none'
     }
   })
-
   cms.page.componentObject.firstTabs.setTab(cms.page.componentObject.firstTabs.currentTabID)
-  cms.page.componentObject.logo.setCallback((event) => {
-    // get element with id = sidebar and toggle the class 'visible'
+  cms.page.componentObject.logo.addCallback((event) => {
     document.getElementById('sidebar').classList.toggle('visible')
   })
-
-
-  cms.page.componentObject.media.setCallback((key, value) => {
+  cms.page.componentObject.media.addCallback((result) => {
     // console.log('mediaType callback', key, value)
+    let key = result.key
+    let value = result.value
     mediaType = JSON.parse(value)
     maxLength = Number(mediaType.tokens)
     clipboard.value = mediaType.name + persona
   })
-
-  cms.page.componentObject.persona.setCallback((key, value) => {
-    // console.log('persona callback', key, value)
+  cms.page.componentObject.persona.addCallback( result => {
+    let key = result.key
+    let value = result.value
     value = JSON.parse(value)
     persona = value
     clipboard.value = mediaType.name + persona.prompt
-    // displayHistory(persona.name)
-  })
-  cms.page.componentObject.history.setCallback((key, value) => {
     displayHistory(key)
   })
+
+  myHistory.addCollection(cms.page.componentObject.history.collection)
+  cms.page.componentObject.history.addCallback(result => {
+    let userId = result.key
+    let value = result.value
+    if (window.location.hash != '#chat')
+        window.location.hash = '#historyOutput'
+        myHistory.displayHistory(userId)
+  })
+
 
   if (!cms.page.componentObject.chat.user) {
     document.getElementById("userID").style.display = "block";
@@ -63,11 +81,11 @@ await cms.initComponents().then(() => {
     let userIDSubmit = document.getElementById("userIDSubmit");
     userIDSubmit.addEventListener("click", cms.page.componentObject.chat.userIDSubmit.bind(cms.page.componentObject.chat))
   }
-  cms.page.componentObject.chat.setCallback((text) => {
+
+  cms.page.componentObject.chat.addCallback((text) => {
     console.log('chat callback', text)
     // displayHistory(text)
   })
-
 })
 
 
@@ -89,29 +107,10 @@ function submit() {
   // document.getElementById("summary").value = ''
 
   let prompt = clipboard.value
-  let size = mediaType.tokens 
-  cms.page.componentObject.summary.submit(prompt,size)
-      running = false;
-      // var historyEntry = {
-      //   prompt: prompt,
-      //   completion: completion,
-      //   persona: 'weo'
-      // }
-      // historyCollection.add(historyEntry).then(hist => {
-      //   // console.log('history added', hist)
-      //   document.getElementById("summary").value += "\n\n"+hist._id
-      // })
+  let size = mediaType.tokens
+  cms.page.componentObject.summary.submit(prompt, size)
+  running = false;
 }
-
-// function getCollectionHistory() {
-//   var token = localStorage.getItem('openai_key')
-//   if (token == null) return
-//   token = 'sk' + token.substring(token.indexOf('-') + 1)
-//   return new Collection(token, (history) => {
-//     // console.log('history: ', history)
-//   })
-// }
-// var historyCollection = getCollectionHistory()
 
 // on click of copy button add the text from the summary paragraph to the clipboard
 let copyButton = document.getElementById('copy')
@@ -126,62 +125,63 @@ function copy() {
       persona: persona,
       media: mediaType,
       prompt: clipboard.value,
+      date: new Date().toISOString(),
       summary: summary
     }
   }
-
   upsert('history', 'history', obj).then(out =>
     console.log('upserted', out))
 }
 
-
-
-// if localstorage has 'openai_key' hide div with id=openai_key_div
 if (localStorage.getItem('openai_key')) {
   document.getElementById('openai_key_div').style.display = 'none';
-  // document.getElementById('not_openai_key_div').style.display = 'block';
 }
-// if localstorage doesn't have 'openai_key' show div with id=openai_key_div
 else {
   document.getElementById('openai_key_div').style.display = 'block';
-  // document.getElementById('not_openai_key_div').style.display = 'none';
 }
-
-// on click of button with id=saveKey, call saveKey function
 document.getElementById('saveKey').addEventListener('click', saveKey);
-// on click of button with id=saveKey, set localstorage 'openai_key' to value of input with id=openai_key
 function saveKey() {
   localStorage.setItem('openai_key', document.getElementById('openai_key').value);
   document.getElementById('openai_key_div').style.display = 'none';
-  //reload page
   location.reload();
 }
-
-function displayHistory(id) {
-  let chat = document.getElementById('historyOutput')
-  chat.innerHTML = ''
-  let chatCollection = new Collection('histories')
-  chatCollection.getByName(id).then(out => {
-    // console.log('out', out)
-    let counter = 0
-    out.history.forEach(item => {
-      counter++
-      let div = document.createElement('div')
-      div.id = `prompt${counter}`
-      if (item.prompt) div.innerHTML = `<p>${item.name}:${item.prompt}</p><p  id="summary${counter}" style="display: none">AI: ${item.summary}</p>`
-      else div.innerHTML = `<p>${item.from}:${item.config.prompt}</p><p  id="summary${counter}"  style="display: none">AI: ${item.completion.choices[0].text}</p>`
-      //on click of prompt${counter} toggle showing summary${counter} 
-      div.addEventListener('click', (event) => {
-        //get id of event target
-        let id = event.currentTarget.id
-        //get the number of the prompt
-        let counter = id.substring(id.indexOf('t') + 1)
-        let summary = document.getElementById(`summary${counter}`)
-        if (summary.style.display === 'none') summary.style.display = 'block'
-        else summary.style.display = 'none'
-      })
-      chat.appendChild(div)
-    })
-  })
-}
+// let userID
+// function displayHistory(userID) {
+//   let historyCollection = new Collection('histories')
+//   historyCollection.getByName(userID).then(out => {
+//     if (out.history[0].completion) {
+//       cms.page.componentObject.chat.setUser(userID, out)
+//       return
+//     }
+//     // get by id=historyList
+//     let historyList = document.getElementById('historyList')
+//     historyList.innerHTML = ''
+//     let counter = 0
+//     out.history.forEach(item => {
+//       counter++
+//       let li = document.createElement('li')
+//       li.setAttribute('data-objid', JSON.stringify(item))
+//       li.className = 'blockItem'
+//       //add a delete font awesome icon to li
+//       li.id = `prompt${counter}`
+//       let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
+//       if (item.prompt) li.innerHTML = `${item.prompt} ` + del
+//       else li.innerHTML = `${item.config.prompt}    ` + del
+//       li.addEventListener('click', (event) => {
+//         let id = event.currentTarget.id
+//         let sourceElement = event.target
+//         let counter = id.substring(id.indexOf('t') + 1)
+//         let item = JSON.parse(event.currentTarget.dataset.objid)
+//         if (sourceElement.id === `delete${counter}`) {
+//           out.history.splice(counter - 1, 1)
+//           historyCollection.update(out)
+//           displayHistory(userID)
+//         }
+//         let historyOutput = document.getElementById(`historyOutput`)
+//         if (item.prompt) historyOutput.value = JSON.stringify(item, 2, 2)
+//       })
+//       historyList.appendChild(li)
+//     })
+//   })
+// }
 

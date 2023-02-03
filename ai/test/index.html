@@ -65,7 +65,11 @@
             let obj = document.getElementById('data').value
             let collection = new Collection(collectionName, poster)
             let id = document.getElementById('id').value;
-            obj =  (typeof obj === 'object') ? JSON.parse(obj) : obj
+            try {
+                obj = JSON.parse(obj)
+            } catch (error) {
+                console.log(error);
+            }
             let name = document.getElementById('name').value;
             return { collection, id, obj, name }
         }
