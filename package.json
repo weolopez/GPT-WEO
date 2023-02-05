@@ -1,6 +1,6 @@
 {
   "name": "todolist",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
