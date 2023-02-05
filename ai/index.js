@@ -2,10 +2,9 @@ import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
 import { upsert } from '/ai/collection/document.js'
 import { Popup } from '/ai/cms/popup/popup.js'
-import { History } from '/ai/app/history/history.js'
+import { History } from '/ai/cms/history/history.js'
 
 let characterCount = 0;
-let maxLength = 1000
 let cms = new CMS()
 let persona;
 let mediaType;
@@ -26,27 +25,7 @@ addPersona.addEventListener('click', (event) => {
 
 popupObj.getData('openai_key')
 
-
 await cms.initComponents().then(() => {
-  cms.page.componentObject.firstTabs.addCallback((tabid) => {
-    if (tabid == 'chat') {
-      document.getElementById('chatInput').style.display = 'block'
-    } else {
-      document.getElementById('chatInput').style.display = 'none'
-    }
-
-    if (tabid == 'summary') {
-      document.getElementById('copy').style.display = 'block'
-    } else {
-      document.getElementById('copy').style.display = 'none'
-    }
-    if (tabid == 'promptArea') {
-      document.getElementById('submit').style.display = 'block'
-    } else {
-      document.getElementById('submit').style.display = 'none'
-    }
-  })
-  cms.page.componentObject.firstTabs.setTab(cms.page.componentObject.firstTabs.currentTabID)
   cms.page.componentObject.logo.addCallback((event) => {
     document.getElementById('sidebar').classList.toggle('visible')
   })
@@ -55,8 +34,8 @@ await cms.initComponents().then(() => {
     let key = result.key
     let value = result.value
     mediaType = JSON.parse(value)
-    maxLength = Number(mediaType.tokens)
-    clipboard.value = mediaType.name + persona
+
+    // clipboard.value = mediaType.name + persona
   })
 
   myHistory.addCollection(cms.page.componentObject.history.collection)
@@ -66,26 +45,18 @@ await cms.initComponents().then(() => {
     let value = result.value
     value = JSON.parse(value)
     persona = value
-    clipboard.value = mediaType.name + persona.prompt
+    // clipboard.value = mediaType.name + persona.prompt
     myHistory.displayHistory(key)
   })
 
   cms.page.componentObject.history.addCallback(result => {
     let userId = result.key
     let value = result.value
-    if (window.location.hash != '#chat')
-        window.location.hash = '#historyOutput'
+    if (window.location.hash != '#Chat')
+        window.location.hash = '#History'
         myHistory.displayHistory(userId)
   })
 
-
-  if (!cms.page.componentObject.chat.user) {
-    document.getElementById("userID").style.display = "block";
-    document.getElementById("chatBox").style.visibility = "hidden";
-    // let userIDInput = document.getElementById("userIDInput");
-    let userIDSubmit = document.getElementById("userIDSubmit");
-    userIDSubmit.addEventListener("click", cms.page.componentObject.chat.userIDSubmit.bind(cms.page.componentObject.chat))
-  }
 
   cms.page.componentObject.chat.addCallback((text) => {
     console.log('chat callback', text)
@@ -94,33 +65,34 @@ await cms.initComponents().then(() => {
 })
 
 
-clipboard.addEventListener("keydown", function () {
-  characterCount = document.getElementById("clipboard").value.length + 1;
-  document.getElementById("wordcount").innerHTML = characterCount + `/${maxLength} characters`;
-})
+// clipboard.addEventListener("keydown", function () {
+//   characterCount = document.getElementById("clipboard").value.length + 1;
+//   document.getElementById("wordcount").innerHTML = characterCount + `/${maxLength} characters`;
+// })
 
-//onclick of button with id=submit call submit function
-let submitButton = document.getElementById('submit')
-submitButton.addEventListener('click', submit)
-let running = false;
-function submit() {
-  if (running) return;
-  running = true;
-  //change the location to #summary
-  window.location.hash = '#summary'
-  //TODO expose api to clear the summary
-  // document.getElementById("summary").value = ''
+// //onclick of button with id=submit call submit function
+// let submitButton = document.getElementById('submit')
+// submitButton.addEventListener('click', submit)
+// let running = false;
+// function submit() {
+//   if (running) return;
+//   running = true;
+//   //change the location to #summary
+//   window.location.hash = '#Completion'
+//   //TODO expose api to clear the summary
+//   // document.getElementById("summary").value = ''
 
-  let prompt = clipboard.value
-  let size = mediaType.tokens
-  cms.page.componentObject.summary.submit(prompt, size)
-  running = false;
-}
+//   let prompt = clipboard.value
+//   let size = mediaType.tokens
+//   cms.page.componentObject.summary.submit(prompt, size)
+//   running = false;
+// }
 
 // on click of copy button add the text from the summary paragraph to the clipboard
 let copyButton = document.getElementById('copy')
 copyButton.addEventListener('click', copy)
 function copy() {
+  let clipboard = document.getElementById('clipboard')
   let summary = document.getElementById('gptSummary').value
   navigator.clipboard.writeText(summary)
   let obj = {
@@ -137,44 +109,3 @@ function copy() {
   upsert('history', 'history', obj).then(out =>
     console.log('upserted', out))
 }
-
-// let userID
-// function displayHistory(userID) {
-//   let historyCollection = new Collection('histories')
-//   historyCollection.getByName(userID).then(out => {
-//     if (out.history[0].completion) {
-//       cms.page.componentObject.chat.setUser(userID, out)
-//       return
-//     }
-//     // get by id=historyList
-//     let historyList = document.getElementById('historyList')
-//     historyList.innerHTML = ''
-//     let counter = 0
-//     out.history.forEach(item => {
-//       counter++
-//       let li = document.createElement('li')
-//       li.setAttribute('data-objid', JSON.stringify(item))
-//       li.className = 'blockItem'
-//       //add a delete font awesome icon to li
-//       li.id = `prompt${counter}`
-//       let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
-//       if (item.prompt) li.innerHTML = `${item.prompt} ` + del
-//       else li.innerHTML = `${item.config.prompt}    ` + del
-//       li.addEventListener('click', (event) => {
-//         let id = event.currentTarget.id
-//         let sourceElement = event.target
-//         let counter = id.substring(id.indexOf('t') + 1)
-//         let item = JSON.parse(event.currentTarget.dataset.objid)
-//         if (sourceElement.id === `delete${counter}`) {
-//           out.history.splice(counter - 1, 1)
-//           historyCollection.update(out)
-//           displayHistory(userID)
-//         }
-//         let historyOutput = document.getElementById(`historyOutput`)
-//         if (item.prompt) historyOutput.value = JSON.stringify(item, 2, 2)
-//       })
-//       historyList.appendChild(li)
-//     })
-//   })
-// }
-

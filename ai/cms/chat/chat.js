@@ -1,8 +1,8 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 import { html } from '/ai/cms/chat/html.js'
 import { weoai } from '/ai/ai/weo.js';
 
-export class chat extends Component {
+export class chat extends component {
     constructor(element, cms, callback) {
         super(element, cms, callback)
         this.element.innerHTML = html

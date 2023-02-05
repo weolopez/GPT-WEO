@@ -1,7 +1,7 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 import { Collection } from '/ai/collection/collection.js'
 
-export class dropdown extends Component {
+export class dropdown extends component {
     collection
     constructor(element, cms, callback) {
         super(element, cms, callback)

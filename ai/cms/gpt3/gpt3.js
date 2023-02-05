@@ -1,4 +1,4 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 import { Completion } from '/ai/ai/completion.js'
 
 const html =`
@@ -9,7 +9,7 @@ padding: 20px;
 width: 100%;
 "></textarea>
 `
-export class gpt3 extends Component {
+export class gpt3 extends component {
     completion
     constructor(element, cms, callback) {
         super(element, cms, callback)
