@@ -167,4 +167,35 @@ export class Completion {
             }
         })
     }
+
+    async getOutline(prompt) {
+        prompt = `create an outline of a story about ${prompt} as a json array of strings `
+        let resp = await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
+        let j = await resp.json()
+        return JSON.parse(j.choices[0].text)
+    }
+    async getWithOrder(count, prompt) {
+        let resp =  await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
+        let j = await resp.json()
+        return {count:count, text: j.choices[0].text }
+    }
+// recursive algorithm to get the completions of an array of prompts feeding the output of one prompt into the next
+    async getCompletionsForArray(arrayOfPrompts) {
+        let results = []
+        let count = 0
+        for (let prompt of arrayOfPrompts) {
+            let resp = await this.getWithOrder(count, prompt)
+            results.push(resp)
+            count++
+        }
+        return results
+    }
+    async test() {
+        let outline = await this.getOutline('the 2023 Atlanta United MLS season')
+        console.log(outline)
+        // let results = await this.getCompletionsForArray(outline)
+        // //results are in format [{count:number, text:string}] reorder the array according to count
+        // results.sort((a, b) => (a.count > b.count) ? 1 : -1)
+        // return results
+    }
 }

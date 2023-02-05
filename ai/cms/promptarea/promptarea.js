@@ -41,6 +41,7 @@ export class promptarea extends component {
 
         let prompt = clipboard.value
         let size = this.mediaType.tokens
+        this.completion.getOutline(prompt)
         // this.cms.page.componentObject.summary.submit(prompt, size)
 
         running = false;
