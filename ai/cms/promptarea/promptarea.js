@@ -10,8 +10,8 @@ export class promptarea extends component {
     persona
     htmls = {}
     completion
-    constructor(element, cms, callback) {
-        super(element, cms, callback)
+    constructor(element, cms) {
+        super(element, cms)
         this.element.innerHTML = html
         let clipboard = document.getElementById("clipboard")
         this.completion = new Completion()
@@ -24,43 +24,34 @@ export class promptarea extends component {
         })
 
 
-        cms.page.componentObject.persona.addCallback( result => {
+        cms.page.componentObject.persona.addCallback(result => {
             let key = result.key
             let value = result.value
             value = JSON.parse(value)
             this.persona = value
-            // clipboard.value = mediaType.name + persona.prompt
-            // myHistory.displayHistory(key)
-          })
-        
-
+        })
 
         clipboard.addEventListener("keydown", function () {
             this.characterCount = document.getElementById("clipboard").value.length + 1;
             document.getElementById("wordcount").innerHTML = this.characterCount + `/${this.maxLength} characters`;
         })
 
-        //onclick of button with id=submit call submit function
-        let submitButton = document.getElementById('submit')
-        submitButton.addEventListener('click', this.submit.bind(this))
-        let running = false;
-
         let copyButton = document.getElementById('copy')
         copyButton.addEventListener('click', this.copy.bind(this))
 
     }
+    
+    eventListener(e) {
+        if (e.detail.id == 'submit') {
+            this.submit()
+        }
+    }
     submit() {
-        // if (running) return;
-        let running = true;
-        //change the location to #summary
-        //TODO expose api to clear the summary
-        // document.getElementById("summary").value = ''
 
         let prompt = clipboard.value
         let size = this.mediaType.tokens
         if (size < 500) {
             this.cms.page.componentObject.summary.submit(prompt, size)
-            window.location.hash = '#Completion'
         }
         else {
             try {
@@ -80,7 +71,6 @@ export class promptarea extends component {
                     return results.sort((a, b) => (a.count > b.count) ? 1 : -1)
                 }).then(results => {
                     let summary = ''
-                    //for each of results append the text to summary
                     results.forEach(result => {
                         summary += result.text
                     })
@@ -89,8 +79,6 @@ export class promptarea extends component {
                 })
             }
         }
-
-        running = false;
     }
     setMediaType(mediaType) {
         this.mediaType = mediaType
@@ -99,8 +87,6 @@ export class promptarea extends component {
         this.getHTML(this.mediaType).then(tokens => {
             this.element.innerHTML = tokens.html
         })
-
-        //    this. = html
     }
     async getHTML(data) {
         if (!data) return

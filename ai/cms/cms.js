@@ -10,8 +10,6 @@ export class CMS {
     constructor() {
         this.initPage()
         this.cms = new Collection('cms')
-        //change body visibility to visible
-        document.body.style.visibility = 'visible'
     }
 
     async save() {
@@ -117,6 +115,9 @@ export class CMS {
 
         this.setHash()
         this.isEdit()
+
+        //change body visibility to visible
+        document.body.style.visibility = 'visible'
     }
     //TODO refactor out
     async isEdit() {

@@ -1,6 +1,6 @@
 export const html =`
 <textarea id="clipboard" maxlength="4000" class="paper">
-write about <Title> in following format 
+write a 1500 word article outline about <prompt> in following json format 
 {
     "Article": {
         "Title": "#{prompt}",

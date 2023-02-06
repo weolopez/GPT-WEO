@@ -35,6 +35,11 @@ export class Completion {
             this.callback(messageEvent.data[0])
         })
     }
+    triggerEvent(isComplete, count) {
+        const event = new CustomEvent('PROGRESS_EVENT', 
+            { detail: {isComplete: isComplete, count: count} });
+        document.dispatchEvent(event);
+    }
     addCallback(callback) {
         if (callback) this.callbacks.push(callback)
     }
@@ -50,7 +55,7 @@ export class Completion {
         this.longCompletion = true
         //apply prompt to outlineTemplate
         outlineTemplate = outlineTemplate.replace('#{prompt}', prompt)
-        this.getCompletion(' Descriptions should be no less than 25 words, introductions should be 100 words '+outlineTemplate, max_tokens, false)
+        this.getCompletion(' Descriptions should be no less than 25 words, introductions should be 100 words ' + outlineTemplate, max_tokens, false)
     }
     longCompletionCallback(data) {
         let outline
@@ -59,21 +64,20 @@ export class Completion {
         } catch (e) {
             console.error(e)
             console.log(data.text)
-        } 
+        }
         this.longCompletion = false
         let introduction = ''
-        outline.Article.Body.forEach( (Body, index) => {
+        outline.Article.Body.forEach((Body, index) => {
             if (index === 0) {
                 introduction = Body.Introduction.Description + ' '
-                this.getCompletion('This is the introduction to '+outline.Article.Title+' '+JSON.stringify(Body), 4000, false)
+                this.getCompletion('This is the introduction to ' + outline.Article.Title + ' ' + JSON.stringify(Body), 4000, false)
             }
-
             else
-            this.getCompletion('This is part of '+outline.Article.Title+' the introduction was '+introduction+JSON.stringify(Body), 4000, false)
+                this.getCompletion('This is part of ' + outline.Article.Title + ' the introduction was ' + introduction + JSON.stringify(Body), 4000, false)
         })
 
         this.callbacks.forEach(callback => {
-            callback({text:JSON.stringify(outline,2,2), finish_reason: 'done'})
+            callback({ text: JSON.stringify(outline, 2, 2), finish_reason: 'done' })
         })
     }
 
@@ -88,7 +92,7 @@ export class Completion {
 
 
     getCompletion(myPrompt, max_tokens, isStream = true) {
-        max_tokens = max_tokens - (myPrompt.length/4)
+        max_tokens = max_tokens - (myPrompt.length / 4)
         //convert max_tokens from float to integer
         max_tokens = Math.floor(max_tokens)
 
@@ -170,12 +174,18 @@ export class Completion {
 
     async getOutline(prompt) {
         // prompt = `create an outline of a story about ${prompt} as a json array of strings `
-        let resp = await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 3000, false))
+        // let resp = await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 3000, false))
+
+        this.triggerEvent(true)
+        let resp = await this.fetchAndRetryIfNecessary(async () => (
+            await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 3000, false))
+        ))
+        this.triggerEvent(false)
         let j = await resp.json()
         let returnString = ''
         try {
-            let tmp =  JSON.parse(j.choices[0].text)
-            returnString = JSON.stringify(tmp,2,2)
+            let tmp = JSON.parse(j.choices[0].text)
+            returnString = JSON.stringify(tmp, 2, 2)
         } catch (e) {
             console.error(e)
             console.log(j.choices[0].text)
@@ -185,16 +195,22 @@ export class Completion {
         // return JSON.parse(j.choices[0].text)
     }
     async getWithOrder(count, prompt) {
-        let resp =  await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
+        let resp = await this.fetchAndRetryIfNecessary(async () => (
+            await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
+        ))
+
         let j = await resp.json()
-        return {count:count, text: j.choices[0].text }
+        return { count: count, text: j.choices[0].text }
     }
-// recursive algorithm to get the completions of an array of prompts feeding the output of one prompt into the next
-    async getCompletionsForArray(arrayOfPrompts) {
+    // recursive algorithm to get the completions of an array of prompts feeding the output of one prompt into the next
+    async getCompletionsForArray(arrayOfPrompts ) {
         let results = []
         let count = 0
+        let len = arrayOfPrompts.length
         for (let prompt of arrayOfPrompts) {
+            this.triggerEvent(true, len-count)
             let resp = await this.getWithOrder(count, JSON.stringify(prompt))
+            this.triggerEvent(false)
             results.push(resp)
             count++
         }
@@ -203,9 +219,25 @@ export class Completion {
     async test() {
         let outline = await this.getOutline('the 2023 Atlanta United MLS season')
         console.log(outline)
-        // let results = await this.getCompletionsForArray(outline)
-        // //results are in format [{count:number, text:string}] reorder the array according to count
-        // results.sort((a, b) => (a.count > b.count) ? 1 : -1)
-        // return results
+    }
+    sleep(milliseconds) {
+        return new Promise((resolve) => setTimeout(resolve, milliseconds))
+    }
+    getMillisToSleep(retryHeaderString) {
+        let millisToSleep = Math.round(parseFloat(retryHeaderString) * 1000)
+        if (isNaN(millisToSleep)) {
+            millisToSleep = Math.max(0, new Date(retryHeaderString) - new Date())
+        }
+        return millisToSleep
+    }
+    async fetchAndRetryIfNecessary(callAPIFn) {
+        const response = await callAPIFn()
+        if (response.status === 429) {
+            const retryAfter = response.headers.get('retry-after')
+            const millisToSleep = this.getMillisToSleep(retryAfter)
+            await this.sleep(millisToSleep)
+            return this.fetchAndRetryIfNecessary(callAPIFn)
+        }
+        return response
     }
 }
