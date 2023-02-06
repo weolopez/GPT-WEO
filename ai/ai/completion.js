@@ -169,10 +169,20 @@ export class Completion {
     }
 
     async getOutline(prompt) {
-        prompt = `create an outline of a story about ${prompt} as a json array of strings `
-        let resp = await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
+        // prompt = `create an outline of a story about ${prompt} as a json array of strings `
+        let resp = await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 3000, false))
         let j = await resp.json()
-        return JSON.parse(j.choices[0].text)
+        let returnString = ''
+        try {
+            let tmp =  JSON.parse(j.choices[0].text)
+            returnString = JSON.stringify(tmp,2,2)
+        } catch (e) {
+            console.error(e)
+            console.log(j.choices[0].text)
+            returnString = j.choices[0].text
+        }
+        return returnString
+        // return JSON.parse(j.choices[0].text)
     }
     async getWithOrder(count, prompt) {
         let resp =  await fetch("https://api.openai.com/v1/completions", getCompletionConfig(prompt, 300, false))
@@ -184,7 +194,7 @@ export class Completion {
         let results = []
         let count = 0
         for (let prompt of arrayOfPrompts) {
-            let resp = await this.getWithOrder(count, prompt)
+            let resp = await this.getWithOrder(count, JSON.stringify(prompt))
             results.push(resp)
             count++
         }

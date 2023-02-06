@@ -1,12 +1,11 @@
 import { CMS } from '/ai/cms/cms.js'
 import { Collection } from '/ai/collection/collection.js';
-import { upsert } from '/ai/collection/document.js'
 import { Popup } from '/ai/cms/popup/popup.js'
 import { History } from '/ai/cms/history/history.js'
 
 let characterCount = 0;
 let cms = new CMS()
-let persona;
+// let persona;
 let mediaType;
 let popupObj = new Popup();
 let myHistory = new History();
@@ -29,14 +28,14 @@ await cms.initComponents().then(() => {
   cms.page.componentObject.logo.addCallback((event) => {
     document.getElementById('sidebar').classList.toggle('visible')
   })
-  cms.page.componentObject.media.addCallback((result) => {
+  // cms.page.componentObject.media.addCallback((result) => {
     // console.log('mediaType callback', key, value)
-    let key = result.key
-    let value = result.value
-    mediaType = JSON.parse(value)
+    // let key = result.key
+    // let value = result.value
+    // mediaType = JSON.parse(value)
 
     // clipboard.value = mediaType.name + persona
-  })
+  // })
 
   myHistory.addCollection(cms.page.componentObject.history.collection)
 
@@ -44,7 +43,7 @@ await cms.initComponents().then(() => {
     let key = result.key
     let value = result.value
     value = JSON.parse(value)
-    persona = value
+    // persona = value
     // clipboard.value = mediaType.name + persona.prompt
     myHistory.displayHistory(key)
   })
@@ -89,23 +88,23 @@ await cms.initComponents().then(() => {
 // }
 
 // on click of copy button add the text from the summary paragraph to the clipboard
-let copyButton = document.getElementById('copy')
-copyButton.addEventListener('click', copy)
-function copy() {
-  let clipboard = document.getElementById('clipboard')
-  let summary = document.getElementById('gptSummary').value
-  navigator.clipboard.writeText(summary)
-  let obj = {
-    name: persona.name,
-    history: {
-      name: persona.name,
-      persona: persona,
-      media: mediaType,
-      prompt: clipboard.value,
-      date: new Date().toISOString(),
-      summary: summary
-    }
-  }
-  upsert('history', 'history', obj).then(out =>
-    console.log('upserted', out))
-}
+// let copyButton = document.getElementById('copy')
+// copyButton.addEventListener('click', copy)
+// function copy() {
+//   let clipboard = document.getElementById('clipboard')
+//   let summary = document.getElementById('gptSummary').value
+//   navigator.clipboard.writeText(summary)
+//   let obj = {
+//     name: persona.name,
+//     history: {
+//       name: persona.name,
+//       persona: persona,
+//       media: mediaType,
+//       prompt: clipboard.value,
+//       date: new Date().toISOString(),
+//       summary: summary
+//     }
+//   }
+//   upsert('history', 'history', obj).then(out =>
+//     console.log('upserted', out))
+// }

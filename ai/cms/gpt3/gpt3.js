@@ -26,6 +26,9 @@ export class gpt3 extends component {
             if (callback) callback(data)
         })
     }
+    setSummary(summary) {
+        document.getElementById('gptSummary').value = summary
+    }
     submit(prompt, size) {
         this.completion.get(prompt, size)
     }
