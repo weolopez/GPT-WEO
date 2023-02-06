@@ -9,13 +9,20 @@ export class component {
         this.id = element.id
         this.cms = cms
         this.element = element
-        
         if (html) {
             let div = document.createElement('div')
             div.innerHTML = html
             element.appendChild(div)
         }
-        
+        document.addEventListener('ComponentEvent', this.eventListener.bind(this), false);
+    }
+    triggerEvent(event_name='ComponentEvent',component) {
+        const event = new CustomEvent(event_name, 
+            { detail: component });
+        document.dispatchEvent(event);
+    }
+    eventListener(e) {
+        // console.log('eventListener', e)
     }
     setHash(hash) {
         if (this.currentHash === hash) return
