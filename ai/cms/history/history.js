@@ -34,6 +34,7 @@ const html = `
 export class History {
     
    historyCollection
+   currentHistoryItem
     constructor(historyCollection) {
         this.historyCollection = historyCollection
         if (html) {
@@ -41,6 +42,21 @@ export class History {
             div.innerHTML = html
             document.body.appendChild(div)
         }
+
+        let historyButton = document.getElementById('editHistory')
+        historyButton.addEventListener('click', this.editHistory.bind(this))
+
+    }
+    editHistory() {
+        let prompt = this.currentHistoryItem.prompt;
+        let summaryText = this.currentHistoryItem.summary;
+
+        let clipboard = document.getElementById('clipboard')
+        let summary = document.getElementById('gptSummary')
+        clipboard.value = prompt
+        summary.value = summaryText
+        window.location.hash = '#Prompt_Area'
+
     }
     addCollection(historyCollection) {
         this.historyCollection = historyCollection
@@ -70,14 +86,14 @@ export class History {
                     let id = event.currentTarget.id
                     let sourceElement = event.target
                     let counter = id.substring(id.indexOf('t') + 1)
-                    let item = JSON.parse(event.currentTarget.dataset.objid)
+                    this.currentHistoryItem = JSON.parse(event.currentTarget.dataset.objid)
                     if (sourceElement.id === `delete${counter}`) {
                         out.history.splice(counter - 1, 1)
                         this.historyCollection.update(out)
                         displayHistory(userID)
                     }
                     let historyOutput = document.getElementById(`historyOutput`)
-                    if (item.prompt) historyOutput.value = JSON.stringify(item, 2, 2)
+                    if (item.prompt) historyOutput.value = JSON.stringify(this.currentHistoryItem, 2, 2)
                 })
                 historyList.appendChild(li)
             })
