@@ -41,16 +41,31 @@ export class CMS {
         this.id = this.page.meta.id
         this.page.data = {}
 
+
+        window.addEventListener('hashchange', function () {
+            this.setHash()
+        }.bind(this))
     }
+    setHash() {
+        this.hash = window.location.href.split('#')[1]
+        //if hash is empty then set hash to page title
+        if (!this.hash) this.hash = this.page.title
+        this.hash = this.hash.replace(/ /g, '_')
+        if (!this.hash) return
+        for (let key in this.page.componentObject) {
+            this.page.componentObject[key].setHash(this.hash)
+        }
+    }
+
     async initComponents() {
 
         // this.page.data = utils.sessionObject(this.page.meta.id)
         // if (!this.page.data) {
-            await this.cms.getByName(this.page.meta.id).then((data) => {
-                //save data to sessionStorage
-                // sessionStorage.setItem(this.page.meta.id, JSON.stringify(data))
-                this.page.data = data
-            })
+        await this.cms.getByName(this.page.meta.id).then((data) => {
+            //save data to sessionStorage
+            // sessionStorage.setItem(this.page.meta.id, JSON.stringify(data))
+            this.page.data = data
+        })
         // }
 
         //get all the elements with the cms class
@@ -73,9 +88,11 @@ export class CMS {
             let id = element.id
             let modules = element.getAttribute('data-modules')
             let components = {}
+
             if (modules && components[modules] === undefined) {
                 components[modules] = await import(`/ai/cms/${modules}/${modules}.js`)
             }
+            
             if (components[modules]) {
                 this.classes[modules] = components[modules][modules]
                 this.page.componentObject[id] = new this.classes[modules](element, this)
@@ -93,10 +110,12 @@ export class CMS {
                     document
                         .getElementById(element.getAttribute('data-for'))
                         .appendChild(element)
-                        
+
                 }
             }
         }
+
+        this.setHash()
         this.isEdit()
     }
     //TODO refactor out

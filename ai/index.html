@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
     <!-- <link rel="icon" href="favicon.svg"> -->
-    <title>A! v1</title>
+    <title>Prompt Area</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" <link
         rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -39,7 +39,7 @@
 <body style="visibility: hidden">
 
     <!-- <nav id="navBar" data-modules="navbar" class="cms"></nav> -->
-    <div  id="logo" data-modules="logo" class="cms" style="margin: 0 82px 0 70px">
+    <div id="logo" data-modules="logo" class="cms" style="margin: 0 82px 0 70px">
     </div>
 
     <div id="body" class="container-fluid">
@@ -62,92 +62,53 @@
                                 class="cms form-select">
                             </select>
                         </li>
-                        <li class="nav-item">
+                        <li  name="Prompt Area" data-modules="component" class="cms nav-item">
                             <label>Media Types</label>
                             <select id="media" data-modules="dropdown" class="cms form-select">
                             </select>
                         </li>
-                        <li class="nav-item">
+                        <li id="historyLabel" name="History" data-modules="component"  class="cms nav-item">
                             <a class="nav-link active" href="#">
                                 History
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <select id="history" data-collection="histories" data-modules="dropdown" class="cms form-select">
+                        <li id="historySelect" name="History" data-modules="component" class="cms nav-item">
+                            <select id="history" data-collection="histories" data-modules="dropdown"
+                                class="cms form-select">
                             </select>
                         </li>
-                        <li>
+                        <li id="historyListContainer" name="History" data-modules="component"  class="cms">
                             <ul id="historyList" class="scroll linkList">
                             </ul>
-                            <style>
-                                .scroll {
-                                    white-space: nowrap;
-                                    height: 44vh;
-                                    max-width: 20vw;
-                                }
-                                .linkList {
-                                    list-style-type: none;
-                                    padding: 0;
-                                }
-                                .blockItem {
-                                    background: rgb(68 70 84);
-                                    overflow: auto;
-                                    width: 20vw;
-                                    margin: 0;
-                                    padding: 3px;
-                                }
-                                .blockItem:hover {
-                                    background: #343541;
-                                    width: 80vw;
-                                }
-                                .blockItem i:hover {
-                                    font-size: 24px;
-                                    font-weight: bolder;
-                                    border-radius: 50%;
-                                }
-                            </style>
                         </li>
                     </ul>
             </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto">
-                
-                <div id="openai_key_div" style="display: none;">
-                    <label for="openai_key">OpenAI Key</label>
-                    <input type="text" id="openai_key" />
-                    <button id="saveKey">Save Key</button>
-                </div>
-
                 <tabs id="firstTabs" class="cms" data-modules="tabs">
-                    <div id="promptArea" class="tabArea" name="Prompt Area">
-                        <textarea id="clipboard" maxlength="1000" class="paper">write a 1,500 word article about </textarea>
-                        <div class="marginRight" style="display: flex; justify-content: space-between;">
-                            <div id="wordcount">0/1000</div>
-                        </div>
-                    </div>
+                    <div id="promptArea" data-modules="promptarea" class="cms tabArea" name="Prompt Area"></div>
                     <div id="summary" name="Completion" data-modules="gpt3" class="cms tabArea summary paper"></div>
-                    <textarea id="historyOutput" name="History" class="tabArea historyOutput paper"> </textarea>
+                    <textarea id="historyOutput" name="History" data-modules="history"
+                        class="tabArea historyOutput paper"> </textarea>
                     <div id="chat" name="Chat" data-modules="chat" class="cms tabArea historyOutput paper"> </div>
                 </tabs>
-
-
             </main>
         </div>
     </div>
     <footer id="footer" class=" promptBtnGrp">
-        <div id="editToggle" style="display: none;" >
+        <div id="editToggle" style="display: none;">
             <input id="editButton" type="checkbox" data-toggle="toggle" data-style="ios">
         </div>
 
         <div class="promptBtnGrp">
-            <button id="copy" class="marginRight btn btn-primary btn-sm"><i
+            <button id="copy" name="Completion" data-modules="component" class="cms marginRight btn btn-primary btn-sm"><i
                     class="marginRight fa-solid fa-copy"></i>Copy</button>
-            <button id="submit" class="marginRight btn btn-primary btn-sm"><i
+            <button id="submit" name="Prompt Area" data-modules="component" class="cms marginRight btn btn-primary btn-sm"><i
                     class="marginRight fa-solid fa-wand-magic-sparkles"></i>Generate</button>
         </div>
 
-    <input id="chatInput" type="text"  placeholder="Your message">
-</form>
+        <input id="chatInput" type="text" name="Chat" data-modules="component" class="cms" placeholder="Your message">
+        </form>
     </footer>
 
     <div id="jsoneditor"></div>

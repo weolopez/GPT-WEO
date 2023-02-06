@@ -120,6 +120,7 @@
     <script type="module">
         import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
         import { testAI, weoai } from '/ai/ai/weo.js';
+        import { Completion } from '/ai/ai/completion.js';
 
         let present = (data) => {
             data = data.history.completion.choices[0].text
@@ -130,9 +131,19 @@
         }
         
         window.testAI = () => {
-            testAI().then(present)
+            let c = new Completion()
+            c.test().then( result => {
+                //loop through results and append textarea with id=data
+                let data = document.getElementById('data')
+                for (let i = 0; i < result.length; i++) {
+                    data.value += '\nChapter' +
+                    result[i].count + '\n' +
+                    result[i].text
+                }
+
+                
+            })
         }
-       
         window.weoai = () => {
             weoai(document.getElementById('data').value, 'weolopez').then(present)
         } 

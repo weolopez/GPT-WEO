@@ -1,6 +1,6 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 
-export class dynamicForm extends Component {
+export class dynamicForm extends component {
     formData = {}
     constructor(element, cms, callback) {
         super(element, cms, callback)
