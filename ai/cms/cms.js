@@ -1,33 +1,16 @@
-// Description: CMS class to fetch data from the API
-
 import { Collection } from '/ai/collection/collection.js'
-// import { utils } from '/ai/collection/document.js'
 
 export class CMS {
     page = {}
     classes = {}
     cms
+    hash=''
     constructor() {
         this.initPage()
         this.cms = new Collection('cms')
     }
 
-    async save() {
-        this.page.data.name = this.page.meta.id
-        let method = (this.page.data._id) ? 'PUT' : 'POST'
-        return await fetch(`/crud/cms`, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.page.data)
-        }).then(response => response.json()).catch(() => {
-            console.log("error");
-        }).then((data) => {
-            // sessionStorage.setItem(data.name, JSON.stringify(data))
-            return data
-        })
-    }
     initPage() {
-        //update page with data from page all meta tags
         let pageMetaElements = document.getElementsByTagName('meta')
         this.page.meta = {}
         for (let i = 0; i < pageMetaElements.length; i++) {
@@ -39,7 +22,6 @@ export class CMS {
         this.id = this.page.meta.id
         this.page.data = {}
 
-
         window.addEventListener('hashchange', function () {
             this.setHash()
         }.bind(this))
@@ -47,7 +29,8 @@ export class CMS {
     setHash() {
         this.hash = window.location.href.split('#')[1]
         //if hash is empty then set hash to page title
-        if (!this.hash) this.hash = this.page.title
+        if (!this.hash) window.location.hash = this.page.title
+        // this.hash = this.page.title
         this.hash = this.hash.replace(/ /g, '_')
         if (!this.hash) return
         for (let key in this.page.componentObject) {
@@ -55,32 +38,27 @@ export class CMS {
         }
     }
 
+    //TODO remove from cms and allow components to initialize themselves
     async initComponents() {
-
-        // this.page.data = utils.sessionObject(this.page.meta.id)
-        // if (!this.page.data) {
         await this.cms.getByName(this.page.meta.id).then((data) => {
-            //save data to sessionStorage
-            // sessionStorage.setItem(this.page.meta.id, JSON.stringify(data))
             this.page.data = data
         })
-        // }
 
-        //get all the elements with the cms class
+        //get all the elements with the cms class to create objects
         this.page.elements = document.getElementsByClassName('cms')
         this.page.componentObject = {}
         // if this.page.data is empty then create a new object
         if (!this.page.data) {
             this.page.data = {
-                name: this.page.meta.id,
-                title: this.page.title,
-                url: this.page.url,
-                path: this.page.path,
-                elements: {}
+             // TODO reduncant with initPage functions   
+                // name: this.page.meta.id,
+                // title: this.page.title,
+                // url: this.page.url,
+                // path: this.page.path,
+                // elements: {}
             }
         }
-        //for each element load modules
-
+        //for each element load modules TODO allow components to initialize themselves
         for (let i = 0; i < this.page.elements.length; i++) {
             let element = this.page.elements[i]
             let id = element.id
@@ -104,6 +82,7 @@ export class CMS {
                     }
                 }
                 //if element attribute data-for move the element into the element with the id of data-for
+                //TODO remove from cms
                 if (element.getAttribute('data-for')) {
                     document
                         .getElementById(element.getAttribute('data-for'))
@@ -133,5 +112,18 @@ export class CMS {
             }
         }
     }
-
+    async save() {
+        this.page.data.name = this.page.meta.id
+        let method = (this.page.data._id) ? 'PUT' : 'POST'
+        return await fetch(`/crud/cms`, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.page.data)
+        }).then(response => response.json()).catch(() => {
+            console.log("error");
+        }).then((data) => {
+            // sessionStorage.setItem(data.name, JSON.stringify(data))
+            return data
+        })
+    }
 }

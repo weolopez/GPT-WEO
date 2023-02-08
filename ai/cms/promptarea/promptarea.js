@@ -16,7 +16,9 @@ export class promptarea extends component {
         let clipboard = document.getElementById("clipboard")
         this.completion = new Completion()
 
-        this.cms.page.componentObject.media.addCallback(result => {
+        document.addEventListener('media', result => {          
+            if (!result) return
+            result = result.detail
             let key = result.key
             let value = result.value
             value = JSON.parse(value)
@@ -24,7 +26,9 @@ export class promptarea extends component {
         })
 
 
-        cms.page.componentObject.persona.addCallback(result => {
+        document.addEventListener('persona', result => {          
+            if (!result) return
+            result = result.detail
             let key = result.key
             let value = result.value
             value = JSON.parse(value)
@@ -39,15 +43,10 @@ export class promptarea extends component {
         let copyButton = document.getElementById('copy')
         copyButton.addEventListener('click', this.copy.bind(this))
 
+        document.addEventListener('submit', this.submit.bind(this), false);
     }
     
-    eventListener(e) {
-        if (e.detail.id == 'submit') {
-            this.submit()
-        }
-    }
     submit() {
-
         let prompt = clipboard.value
         let size = this.mediaType.tokens
         if (size < 500) {

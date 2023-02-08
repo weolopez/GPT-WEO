@@ -21,12 +21,18 @@ export class gpt3 extends component {
     callback(data) {
         super.callback(data)
     }
+
+    triggerEvent(isComplete, count) {
+        const event = new CustomEvent('PROGRESS_EVENT', 
+            { detail: {isComplete: isComplete, count: count} });
+        document.dispatchEvent(event);
+    }
     setCallback(callback) {
         this.completion.addCallback( (data) => {
             //get element by id = summary and append the text
             if (data.finish_reason) {
                 console.log(data.finish_reason)
-                this.triggerEvent('PROGRESS_EVENT', false) 
+                this.triggerEvent(false) 
                 window.location.hash = '#Completion'
                 if (callback) callback(data.finish_reason)
             }
@@ -38,7 +44,7 @@ export class gpt3 extends component {
         document.getElementById('gptSummary').value = summary
     }
     submit(prompt, size) {
-        this.triggerEvent('PROGRESS_EVENT', true)
+        this.triggerEvent(true)
         this.completion.get(prompt, size)
     }
 }

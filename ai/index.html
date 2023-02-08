@@ -37,7 +37,6 @@
 </head>
 
 <body style="visibility: hidden">
-
     <!-- <nav id="navBar" data-modules="navbar" class="cms"></nav> -->
     <div id="logo" data-modules="logo" class="cms" style="margin: 0 82px 0 70px">
     </div>
@@ -87,6 +86,7 @@
             <main role="main" class="col-md-9 ml-sm-auto">
                 <tabs id="firstTabs" class="cms" data-modules="tabs">
                     <div id="promptArea" data-modules="promptarea" class="cms tabArea" name="Prompt Area"></div>
+                    <div id="promptEngineering" data-modules="promptengineering" class="cms tabArea paper" name="Prompt Engineering"></div>
                     <div id="summary" name="Completion" data-modules="gpt3" class="cms tabArea summary paper"></div>
                     <textarea id="historyOutput" name="History" data-modules="history"
                         class="tabArea historyOutput paper"> </textarea>
@@ -109,9 +109,15 @@
 
             <button id="copy" name="Completion" data-modules="component"
                 class="cms marginRight btn btn-primary btn-sm"><i class="marginRight fa-solid fa-copy"></i>Copy</button>
-            <!-- <button id="submit" name="Prompt Area" data-modules="component"
+            
+            <button id="save" name="Prompt Engineering" data-modules="component"
                 class="cms marginRight btn btn-primary btn-sm"><i
-                    class="marginRight fa-solid fa-wand-magic-sparkles"></i>Generate</button> -->
+                    class="marginRight fa-solid fa-save"></i>Save</button>
+            <button id="generate" name="Prompt Engineering" data-modules="button"
+            class="cms marginRight btn btn-primary btn-sm"><i
+                class="marginRight fa-solid fa-wand-magic-sparkles"></i>Generate</button>
+
+
             <button id="editHistory" name="History" data-modules="component"
                 class="cms marginRight btn btn-primary btn-sm"><i
                     class="marginRight fa-solid fa-wand-magic-sparkles"></i>Edit Prompt</button>

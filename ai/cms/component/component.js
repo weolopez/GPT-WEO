@@ -1,11 +1,16 @@
 const html = undefined
-export class component {
+export class component extends HTMLElement {
     id
     cms
     element
     callbacks=[]
     currentHash
     constructor(element, cms) {
+        super();
+
+        if (!element) return; //element = this.attachShadow({mode: 'open'}); 
+        if (!cms) return
+
         this.id = element.id
         this.cms = cms
         this.element = element
@@ -54,3 +59,7 @@ export class component {
         })
     }
 }
+
+
+// Define the new element
+// customElements.define('popup-info', PopUpInfo);

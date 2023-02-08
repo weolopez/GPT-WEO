@@ -60,6 +60,7 @@ export class dropdown extends component {
             let value = target.options[selectedIndex].value
             let key = target.options[selectedIndex].innerHTML
             this.callback({key, value})
+            this.triggerEvent(this.element.id, {key, value})
         })
         //call the callback with the first option
         // this.callback(this.element.options[0].innerHTML, this.element.options[0].value)

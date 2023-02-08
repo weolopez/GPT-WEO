@@ -12,7 +12,7 @@ export class button extends component {
         document.addEventListener('PROGRESS_EVENT', this.progress.bind(this), false);
     }
     triggerEvent() {
-        super.triggerEvent('ComponentEvent', this)
+        super.triggerEvent(this.element.id, this)
     }
 
     progress(event) {

@@ -28,14 +28,6 @@ await cms.initComponents().then(() => {
   cms.page.componentObject.logo.addCallback((event) => {
     document.getElementById('sidebar').classList.toggle('visible')
   })
-  // cms.page.componentObject.media.addCallback((result) => {
-    // console.log('mediaType callback', key, value)
-    // let key = result.key
-    // let value = result.value
-    // mediaType = JSON.parse(value)
-
-    // clipboard.value = mediaType.name + persona
-  // })
 
   myHistory.addCollection(cms.page.componentObject.history.collection)
 
@@ -63,48 +55,3 @@ await cms.initComponents().then(() => {
   })
 })
 
-
-// clipboard.addEventListener("keydown", function () {
-//   characterCount = document.getElementById("clipboard").value.length + 1;
-//   document.getElementById("wordcount").innerHTML = characterCount + `/${maxLength} characters`;
-// })
-
-// //onclick of button with id=submit call submit function
-// let submitButton = document.getElementById('submit')
-// submitButton.addEventListener('click', submit)
-// let running = false;
-// function submit() {
-//   if (running) return;
-//   running = true;
-//   //change the location to #summary
-//   window.location.hash = '#Completion'
-//   //TODO expose api to clear the summary
-//   // document.getElementById("summary").value = ''
-
-//   let prompt = clipboard.value
-//   let size = mediaType.tokens
-//   cms.page.componentObject.summary.submit(prompt, size)
-//   running = false;
-// }
-
-// on click of copy button add the text from the summary paragraph to the clipboard
-// let copyButton = document.getElementById('copy')
-// copyButton.addEventListener('click', copy)
-// function copy() {
-//   let clipboard = document.getElementById('clipboard')
-//   let summary = document.getElementById('gptSummary').value
-//   navigator.clipboard.writeText(summary)
-//   let obj = {
-//     name: persona.name,
-//     history: {
-//       name: persona.name,
-//       persona: persona,
-//       media: mediaType,
-//       prompt: clipboard.value,
-//       date: new Date().toISOString(),
-//       summary: summary
-//     }
-//   }
-//   upsert('history', 'history', obj).then(out =>
-//     console.log('upserted', out))
-// }
