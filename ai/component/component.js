@@ -1,15 +1,10 @@
 const html = undefined
-export class component {
-    id
-    cms
-    element
+export class component extends HTMLElement {
     callbacks=[]
     currentHash
-    constructor(element, cms) {
+    constructor() {
+        super();
 
-        this.cms = cms
-        this.element = element
-        this.id = element.id
         if (html) {
             let div = document.createElement('div')
             div.innerHTML = html

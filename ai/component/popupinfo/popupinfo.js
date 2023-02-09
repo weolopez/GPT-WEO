@@ -37,7 +37,7 @@ export class popupinfo extends component {
   
       // Create some CSS to apply to the shadow dom
       const style = document.createElement('style');
-      console.log(style.isConnected);
+      // console.log(style.isConnected);
   
       style.textContent = `
         .wrapper {
@@ -68,7 +68,7 @@ export class popupinfo extends component {
   
       // Attach the created elements to the shadow dom
       shadow.appendChild(style);
-      console.log(style.isConnected);
+      // console.log(style.isConnected);
       shadow.appendChild(wrapper);
       wrapper.appendChild(icon);
       wrapper.appendChild(info);

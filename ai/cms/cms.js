@@ -64,6 +64,7 @@ export class CMS {
             let id = element.id
             let modules = element.getAttribute('data-modules')
             let components = {}
+            let webcomponents = {}
 
             if (modules && components[modules] === undefined) {
                 components[modules] = await import(`/ai/cms/${modules}/${modules}.js`)
@@ -90,6 +91,13 @@ export class CMS {
 
                 }
             }
+            //get the tag name of the element
+            modules = element.tagName.toLowerCase()
+            modules = modules.replace(/-/g, '')
+            if (modules && webcomponents[modules] === undefined) {
+                webcomponents[modules] = await import(`/ai/component/${modules}/${modules}.js`)
+            }
+
         }
 
         this.setHash()
