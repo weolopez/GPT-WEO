@@ -43,21 +43,11 @@ export class CMS {
         await this.cms.getByName(this.page.meta.id).then((data) => {
             this.page.data = data
         })
+        if (!this.page.data) this.page.data = {}
 
         //get all the elements with the cms class to create objects
         this.page.elements = document.getElementsByClassName('cms')
         this.page.componentObject = {}
-        // if this.page.data is empty then create a new object
-        if (!this.page.data) {
-            this.page.data = {
-             // TODO reduncant with initPage functions   
-                // name: this.page.meta.id,
-                // title: this.page.title,
-                // url: this.page.url,
-                // path: this.page.path,
-                // elements: {}
-            }
-        }
         //for each element load modules TODO allow components to initialize themselves
         for (let i = 0; i < this.page.elements.length; i++) {
             let element = this.page.elements[i]
@@ -95,7 +85,11 @@ export class CMS {
             modules = element.tagName.toLowerCase()
             modules = modules.replace(/-/g, '')
             if (modules && webcomponents[modules] === undefined) {
-                webcomponents[modules] = await import(`/ai/component/${modules}/${modules}.js`)
+                try {
+                    webcomponents[modules] = await import(`/ai/component/${modules}/${modules}.js`)
+                } catch (e) {
+                    console.log(e)
+                }
             }
 
         }
