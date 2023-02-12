@@ -1,5 +1,9 @@
 export const style = `
-
+.deleteHistoryButton {
+    top: 0;
+    right: 0;
+    position: absolute;
+}
 .scroll {
     white-space: nowrap;
     height: 44vh;
