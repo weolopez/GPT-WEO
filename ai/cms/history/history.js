@@ -6,6 +6,7 @@ export class History {
     
    historyCollection
    currentHistoryItem
+   currentHistory
     constructor(historyCollection) {
         this.historyCollection = historyCollection
         if (style) {
@@ -17,6 +18,9 @@ export class History {
         let historyButton = document.getElementById('editHistory')
         historyButton.addEventListener('click', this.editHistory.bind(this))
 
+        // let historyButton = document.getElementById('editHistory')
+        // historyButton.addEventListener('click', this.editHistory.bind(this))
+        //get element by class deleteHistoryButton
 
         document.addEventListener('history', result => {          
             if (!result) return
@@ -41,7 +45,9 @@ export class History {
     }
 
     displayHistory(userID) {
+        this.userID = userID
         this.historyCollection.getByName(userID).then(out => {
+            this.currentHistory = out
             let historyList = document.getElementById('historyList')
             historyList.innerHTML = ''
             let counter = 0
@@ -65,17 +71,33 @@ export class History {
                         this.historyCollection.update(out)
                         displayHistory(userID)
                     }
-                    this.displayHistryRecord()
+                    this.displayHistryRecord(counter)
                 })
                 historyList.appendChild(li)
             })
         })
     }
-    displayHistryRecord() {
-        let template = getHTML(this.currentHistoryItem);
+    displayHistryRecord(counter) {
         let historyOutput = document.getElementById(`historyOutput`)
+        if (!counter) {
+            historyOutput.innerHTML = ''
+            return
+        }
+        let template = getHTML(this.currentHistoryItem,counter);
         console.log(template)
 
         historyOutput.innerHTML = template// JSON.stringify(this.currentHistoryItem, 2, 2)
+        let deleteHistoryButton = document.getElementsByClassName('deleteHistoryButton')[0]
+        deleteHistoryButton.addEventListener('click', this.deleteHistory.bind(this))
+
+    }
+    deleteHistory(event) {
+        //get id of the element clicked
+        let id = event.currentTarget.id
+        let counter = id.substring(id.indexOf('t') + 2)
+        this.currentHistory.history.splice(counter - 1, 1)
+        this.historyCollection.update(this.currentHistory)
+        this.displayHistory(this.userID)
+        this.displayHistryRecord()
     }
 }
