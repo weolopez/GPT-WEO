@@ -27,7 +27,8 @@
     "openai": "^3.1.0",
     "pug": "2.0.0-beta11",
     "serve-favicon": "^2.5.0",
-    "twilio": "^3.84.1"
+    "twilio": "^3.84.1",
+    "vanilla-jsoneditor": "^0.14.4"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",

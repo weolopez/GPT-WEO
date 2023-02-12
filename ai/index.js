@@ -24,34 +24,14 @@ addPersona.addEventListener('click', (event) => {
 
 popupObj.getData('openai_key')
 
-await cms.initComponents().then(() => {
-  cms.page.componentObject.logo.addCallback((event) => {
-    document.getElementById('sidebar').classList.toggle('visible')
-  })
-
-  myHistory.addCollection(cms.page.componentObject.history.collection)
-
-  cms.page.componentObject.persona.addCallback( result => {
-    let key = result.key
-    let value = result.value
-    value = JSON.parse(value)
-    // persona = value
-    // clipboard.value = mediaType.name + persona.prompt
-    myHistory.displayHistory(key)
-  })
-
-  cms.page.componentObject.history.addCallback(result => {
-    let userId = result.key
-    let value = result.value
-    if (window.location.hash != '#Chat')
-        window.location.hash = '#History'
-        myHistory.displayHistory(userId)
-  })
-
-
-  cms.page.componentObject.chat.addCallback((text) => {
-    console.log('chat callback', text)
-    // displayHistory(text)
-  })
+await cms.initComponents()
+cms.page.componentObject.logo.addCallback((event) => {
+  document.getElementById('sidebar').classList.toggle('visible')
 })
 
+myHistory.addCollection(cms.page.componentObject.history.collection)
+
+cms.page.componentObject.chat.addCallback((text) => {
+  console.log('chat callback', text)
+  // displayHistory(text)
+})

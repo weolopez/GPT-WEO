@@ -1,19 +1,49 @@
-<!DOCTYPE html>
-<html>
-  <head>
+<!doctype html>
+<html lang="en" style="overflow: hidden;">
+
+<head>
+    <meta name="version" content="1.0.0">
+    <meta name="id" content="cms">
     <meta charset="utf-8">
-    <title>Pop-up info box — web components</title>
-    <script src="popupinfo.js" defer></script>
-  </head>
-  <body>
-    <h1>Pop-up info widget - web components</h1>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
+ <title>component</title>
 
-    <form>
-      <div>
-        <label for="cvc">Enter your CVC <popup-info img="popupinfo/img/alt.png" data-text="Your card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info></label>
-        <input type="text" id="cvc">
-      </div>
-    </form>
+   </head>
 
-  </body>
+<body >
+
+    <label style="position:absolute;top:100px;" for="cvc">Enter your CVC <popup-info class="cms" img="popupinfo/img/alt.png" data-text="Your card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info></label>
+ 
+<script type="module">
+import { CMS } from '/ai/cms/cms.js'
+
+let cms = new CMS()
+cms.initComponents()
+
+let page = {
+    id: "component",
+    html: [
+        {
+
+            body: `<component id="mycomponent" data-modules="component" class="cms"></component>`,
+            body: `<label style="position:absolute;top:200px;" for="cvc">Enter your CVC <popup-info class="cms" img="./img/alt.png" data-text="WEO card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info></label>`
+        }
+    ]
+}
+
+// load page: this will probably be main loop for wiki loop through page.html and add value to key
+page.html.forEach(async (item) => {
+    let key = Object.keys(item)[0]
+    let value = item[key]
+    let element = document.getElementsByTagName(key)[0]
+    element.innerHTML += value
+})
+
+
+</script>
+</body>
+
 </html>

@@ -9,7 +9,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
-    <!-- <link rel="icon" href="favicon.svg"> -->
     <title>Prompt_Area</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" <link
@@ -86,10 +85,10 @@
             <main role="main" class="col-md-9 ml-sm-auto">
                 <tabs id="firstTabs" class="cms" data-modules="tabs">
                     <div id="promptArea" data-modules="promptarea" class="cms tabArea" name="Prompt Area"></div>
-                    <div id="promptEngineering" data-modules="promptengineering" class="cms tabArea paper" name="Prompt Engineering"></div>
+                    <!-- <div id="promptEngineering" data-modules="promptengineering" class="cms tabArea paper" name="Prompt Engineering"></div> -->
                     <div id="summary" name="Completion" data-modules="gpt3" class="cms tabArea summary paper"></div>
-                    <textarea id="historyOutput" name="History" data-modules="history"
-                        class="tabArea historyOutput paper"> </textarea>
+                    <div id="historyOutput" name="History" data-modules="history"
+                        class="tabArea historyOutput paper"> </div>
                     <div id="chat" name="Chat" data-modules="chat" class="cms tabArea historyOutput paper"> </div>
                 </tabs>
             </main>
@@ -126,12 +125,6 @@
         <input id="chatInput" type="text" name="Chat" data-modules="component" class="cms" placeholder="Your message">
         </form>
     </footer>
-
-    <div id="jsoneditor"></div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.js"></script>
-
-
     <script type="module" src="index.js"></script>
 
 </body>

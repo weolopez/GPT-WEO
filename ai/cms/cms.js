@@ -1,26 +1,29 @@
 import { Collection } from '/ai/collection/collection.js'
 
 export class CMS {
-    page = {}
+    page = { data: {}, meta: {} }
     classes = {}
-    cms
-    hash=''
+    cmsCollection
+    hash = ''
+    webcomponents = {}
+    components = {}
+    static cms
     constructor() {
         this.initPage()
-        this.cms = new Collection('cms')
+        this.cmsCollection = new Collection('cms')
+        CMS.cms = this
     }
 
     initPage() {
         let pageMetaElements = document.getElementsByTagName('meta')
-        this.page.meta = {}
         for (let i = 0; i < pageMetaElements.length; i++) {
             this.page.meta[pageMetaElements[i].name] = pageMetaElements[i].content
         }
+
         this.page.title = document.title
         this.page.url = window.location.href
         this.page.path = window.location.pathname
         this.id = this.page.meta.id
-        this.page.data = {}
 
         window.addEventListener('hashchange', function () {
             this.setHash()
@@ -39,32 +42,43 @@ export class CMS {
     }
 
     //TODO remove from cms and allow components to initialize themselves
+    // distinction between webcomponents and components
     async initComponents() {
-        await this.cms.getByName(this.page.meta.id).then((data) => {
-            this.page.data = data
-        })
-        if (!this.page.data) this.page.data = {}
+
+        let data = await this.cmsCollection.getByName(this.page.meta.id)
+        if (data && Object.keys(data).length > 0 && data.constructor === Object) this.page.data = data
 
         //get all the elements with the cms class to create objects
         this.page.elements = document.getElementsByClassName('cms')
         this.page.componentObject = {}
+
+        await this.initializeComponents(this.page.elements)
+
+        this.setHash()
+        this.isEdit()
+        this.loadComponentsFromCMS()
+
+        //change body visibility to visible
+        document.body.style.visibility = 'visible'
+    }
+    async initializeComponents(elements) {
         //for each element load modules TODO allow components to initialize themselves
-        for (let i = 0; i < this.page.elements.length; i++) {
-            let element = this.page.elements[i]
+        for (let i = 0; i < elements.length; i++) {
+            let element = elements[i]
             let id = element.id
             let modules = element.getAttribute('data-modules')
-            let components = {}
-            let webcomponents = {}
 
-            if (modules && components[modules] === undefined) {
-                components[modules] = await import(`/ai/cms/${modules}/${modules}.js`)
+            if (modules && this.components[modules] === undefined) {
+                this.components[modules] = await import(`/ai/cms/${modules}/${modules}.js`)
             }
-            
-            if (components[modules]) {
-                this.classes[modules] = components[modules][modules]
+
+            if (this.components[modules]) {
+                this.classes[modules] = this.components[modules][modules]
                 this.page.componentObject[id] = new this.classes[modules](element, this)
             } else {
-                element.innerText = this.page.data[element.id]
+                //TODO don't do this for webcomponents
+                if (this.page.data[element.id])
+                    element.innerText = this.page.data[element.id]
                 if (this.page.data.links && this.page.data.links[element.id]) {
                     // create an onclick event for the element that will set the href
                     // to the link in this.page.data.links[element.id] 
@@ -83,36 +97,31 @@ export class CMS {
             }
             //get the tag name of the element
             modules = element.tagName.toLowerCase()
+            //if modules does not have a dash return
+            if (modules.indexOf('-') === -1) continue
             modules = modules.replace(/-/g, '')
-            if (modules && webcomponents[modules] === undefined) {
+            if (modules && this.webcomponents[modules] === undefined) {
                 try {
-                    webcomponents[modules] = await import(`/ai/component/${modules}/${modules}.js`)
+                    this.webcomponents[modules] = await import(`/ai/component/${modules}/${modules}.js`)
                 } catch (e) {
                     console.log(e)
                 }
             }
 
         }
-
-        this.setHash()
-        this.isEdit()
-
-        //change body visibility to visible
-        document.body.style.visibility = 'visible'
     }
-    //TODO refactor out
+    async stringToElement(html) {
+        let template = document.createElement('template');
+        template.innerHTML = html;
+        let elements = template.content.querySelectorAll('.cms')
+        let cmsCount = (elements.length)
+        await this.initializeComponents(elements)
+        return template.content;
+    }
     async isEdit() {
         if (localStorage.getItem('enableEditor') !== 'true') return
-        let cmsEdit = await import(`/ai/cms/edit/edit.js`)
-        let editor = new cmsEdit.CMSEditor(this)
-    }
-    findElement(id) {
-        for (let i = 0; i < this.page.elements.length; i++) {
-            let element = this.page.elements[i]
-            if (element.id === id) {
-                return element
-            }
-        }
+        let e = await this.stringToElement(`<json-editor class="cms"></json-editor>`)
+        document.body.append(e)
     }
     async save() {
         this.page.data.name = this.page.meta.id
@@ -126,6 +135,24 @@ export class CMS {
         }).then((data) => {
             // sessionStorage.setItem(data.name, JSON.stringify(data))
             return data
+        })
+    }
+
+    loadComponentsFromCMS() {
+        let value = ''
+
+        if (!this.page.data.html) return
+        
+        this.page.data.html.forEach(async (item) => {
+
+            let key = Object.keys(item)[0]
+            value = item[key]
+
+            let element = document.querySelector(key)
+            this.stringToElement(value).then((value) => {
+                element.appendChild(value)
+            })
+
         })
     }
 }

@@ -1,10 +1,11 @@
 const html = undefined
 export class component extends HTMLElement {
-    callbacks=[]
+    callbacks = []
     currentHash
     constructor() {
         super();
-
+    }
+    init() {
         if (html) {
             let div = document.createElement('div')
             div.innerHTML = html
@@ -12,8 +13,8 @@ export class component extends HTMLElement {
         }
         document.addEventListener('ComponentEvent', this.eventListener.bind(this), false);
     }
-    triggerEvent(event_name='ComponentEvent',component) {
-        const event = new CustomEvent(event_name, 
+    triggerEvent(event_name = 'ComponentEvent', component) {
+        const event = new CustomEvent(event_name,
             { detail: component });
         document.dispatchEvent(event);
     }
@@ -50,7 +51,6 @@ export class component extends HTMLElement {
         })
     }
 }
-
 
 // Define the new element
 // customElements.define('popup-info', PopUpInfo);
