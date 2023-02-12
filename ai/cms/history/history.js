@@ -1,50 +1,28 @@
-const html = `
-<style>
-    .scroll {
-        white-space: nowrap;
-        height: 44vh;
-        max-width: 20vw;
-    }
+import { CMS } from '/ai/cms/cms.js'
+import { getHTML } from '/ai/cms/history/html.js'
+import { style } from '/ai/cms/history/style.js'
 
-    .linkList {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .blockItem {
-        background: rgb(68 70 84);
-        overflow: auto;
-        width: 20vw;
-        margin: 0;
-        padding: 3px;
-    }
-
-    .blockItem:hover {
-        background: #343541;
-        width: 80vw;
-    }
-
-    .blockItem i:hover {
-        font-size: 24px;
-        font-weight: bolder;
-        border-radius: 50%;
-    }
-</style>
-`
 export class History {
     
    historyCollection
    currentHistoryItem
     constructor(historyCollection) {
         this.historyCollection = historyCollection
-        if (html) {
-            let div = document.createElement('div')
-            div.innerHTML = html
+        if (style) {
+            let div = document.createElement('style')
+            div.innerHTML = style
             document.body.appendChild(div)
         }
 
         let historyButton = document.getElementById('editHistory')
         historyButton.addEventListener('click', this.editHistory.bind(this))
+
+
+        document.addEventListener('history', result => {          
+            if (!result) return
+            this.displayHistory(result.detail.key)
+        })
+        // this.addCollection(CMS.cms.page.componentObject.history.collection)
 
     }
     editHistory() {
@@ -64,11 +42,6 @@ export class History {
 
     displayHistory(userID) {
         this.historyCollection.getByName(userID).then(out => {
-            // if (out.history[0].completion) {
-            //     cms.page.componentObject.chat.setUser(userID, out)
-            //     return
-            // }
-            // get by id=historyList
             let historyList = document.getElementById('historyList')
             historyList.innerHTML = ''
             let counter = 0
@@ -81,7 +54,7 @@ export class History {
                 li.id = `prompt${counter}`
                 let del = `<i class="fas fa-trash-alt" id="delete${counter}"></i>`
                 if (item.prompt) li.innerHTML = `${item.prompt} ` + del
-                else li.innerHTML = `${item.config.prompt}    ` + del
+                else li.innerHTML =  (item.config) ? `${item.config.prompt}    ` + del : ''
                 li.addEventListener('click', (event) => {
                     let id = event.currentTarget.id
                     let sourceElement = event.target
@@ -92,11 +65,17 @@ export class History {
                         this.historyCollection.update(out)
                         displayHistory(userID)
                     }
-                    let historyOutput = document.getElementById(`historyOutput`)
-                    if (item.prompt) historyOutput.value = JSON.stringify(this.currentHistoryItem, 2, 2)
+                    this.displayHistryRecord()
                 })
                 historyList.appendChild(li)
             })
         })
+    }
+    displayHistryRecord() {
+        let template = getHTML(this.currentHistoryItem);
+        let historyOutput = document.getElementById(`historyOutput`)
+        console.log(template)
+
+        historyOutput.innerHTML = template// JSON.stringify(this.currentHistoryItem, 2, 2)
     }
 }

@@ -3,119 +3,63 @@
 
 <head>
     <meta name="version" content="1.0.0">
-    <meta name="id" content="ai">
+    <meta name="id" content="cms">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
     <!-- <link rel="icon" href="favicon.svg"> -->
-    <title>CMS Tester</title>
+    <title>component</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" <link
-        rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-        crossorigin="anonymous"></script>
-
-
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
-        rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
-
-
-    <link rel="stylesheet" href="/ai/styles/global.css">
-</head>
+   </head>
 
 <body style="visibility: hidden">
 
-    <!-- <nav id="navBar" data-modules="navbar" class="cms"></nav> -->
-    <div  id="logo" data-modules="logo" class="cms" style="margin: 0 82px 0 70px">
-    </div>
-
-    <div id="body" class="container-fluid">
-        <div class="row">
-            <nav id="sidebar" class="col-md-2 bg-light sidebar">
-                <div class="sidebar-sticky">
-                    <ul class="nav flex-column" style="padding-top: 20px;">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">
-                                Context
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <select id="history" data-collection="histories" data-modules="dropdown" class="cms form-select">
-                            </select>
-                        </li>
-                    </ul>
-            </nav>
-
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10">
-                
-                <div id="openai_key_div" style="display: none;">
-                    <label for="openai_key">OpenAI Key</label>
-                    <input type="text" id="openai_key" />
-                    <button id="saveKey">Save Key</button>
-                </div>
-
-            <div id="gpt" name="Summary" data-modules="gpt3" class="cms"
-                style="
-                background:white;
-                color:black;
-                height: 500px;
-                margin-top: 100px;
-                overflow: scroll;
-                width: 500px;
-                ">
-            </div>    
+    <label style="position:absolute;top:100px;" for="cvc">Enter your CVC <popup-info img="popupinfo/img/alt.png" data-text="Your card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info></label>
+ 
+<script type="module">
+import { CMS } from '/ai/cms/cms.js'
 
 
-            </main>
-        </div>
-    </div>
-    <footer id="footer" class=" promptBtnGrp">
-        <div id="editToggle" style="display: none;" >
-            <input id="editButton" type="checkbox" data-toggle="toggle" data-style="ios">
-        </div>
+let popupinfoClass = await import(`/ai/cms/popupinfo/popupinfo.js`)
 
-        <div class="promptBtnGrp">
-            <button id="copy" class="marginRight btn btn-primary btn-sm"><i
-                    class="marginRight fa-solid fa-copy"></i>Copy</button>
-            <button id="submit" class="marginRight btn btn-primary btn-sm"><i
-                    class="marginRight fa-solid fa-wand-magic-sparkles"></i>Generate</button>
-        </div>
-    </footer>
 
-    <div id="jsoneditor"></div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.2/jsoneditor.min.js"></script>
-    <script type="module">
-        import { CMS } from '/ai/cms/cms.js'
-        let cms = new CMS()
-        await cms.initComponents().then(() => {
-            console.log('components loaded')
-            cms.page.componentObject.gpt.submit(`
-            tweet a joke about tesla put it in json format with an explaination of the joke'
-        `,400)
-        })
 
-        // let completion = new Completion(completionCallback)
-        // function completionCallback (data) {
-        //    summary.value += data.text
-        //     console.log(data.finish_reason, data.index)
-        // }
 
-        // completion.getCompletion(`
-        //     tweet a joke about tesla put it in json format with an explaination of the joke'
-        // `,400)
-        //  the following is a 1500 word long form article about the history of tactics in soccer changes over the last 50 years. 
-    </script>
+let cms = new CMS()
+await cms.initComponents()
 
+// simulate loading components from CMS data
+// Page is defined by hash -> pull from CMS data for example
+//collection=cms document=<id> this html id=cms  and page is the hash
+// for #component = { }
+//TODO make data-modules optional use tag name instead
+let page = {
+    id: "component",
+    html: [
+        {
+            body: `<component id="mycomponent" data-modules="component" class="cms"></component>`,
+            body: `<label style="position:absolute;top:200px;" for="cvc">Enter your CVC <popup-info img="popupinfo/img/alt.png" data-text="WEO card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info></label>`
+        }
+    ]
+}
+
+// load page: this will probably be main loop for wiki loop through page.html and add value to key
+page.html.forEach(async (item) => {
+    //get key and value from item
+    let key = Object.keys(item)[0]
+    let value = item[key]
+    //get element by tag name of key and append value
+    let element = document.getElementsByTagName(key)[0]
+    element.innerHTML += value
+    //create an element based on value
+
+    // loop through element children and load modules
+})
+
+
+</script>
 </body>
 
 </html>

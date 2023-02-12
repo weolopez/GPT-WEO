@@ -6,9 +6,10 @@ export class component {
     callbacks=[]
     currentHash
     constructor(element, cms) {
-        this.id = element.id
+
         this.cms = cms
         this.element = element
+        this.id = element.id
         if (html) {
             let div = document.createElement('div')
             div.innerHTML = html
@@ -54,3 +55,7 @@ export class component {
         })
     }
 }
+
+
+// Define the new element
+// customElements.define('popup-info', PopUpInfo);

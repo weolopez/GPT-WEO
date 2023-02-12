@@ -124,7 +124,7 @@
   overflow: auto;
   white-space: nowrap;
   display: block;
-  width: 70vw;
+  width: 60vw;
 }
 
 .nav-item {
@@ -222,4 +222,8 @@ footer {
 
 .actionIcon:hover {
   font-size: 24px; 
+}
+
+.promptBtnGrp {
+  display: flex;
 }
