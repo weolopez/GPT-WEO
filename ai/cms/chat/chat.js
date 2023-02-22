@@ -24,9 +24,11 @@ export class chat extends component {
             return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
         }
 
+
+        document.addEventListener('persona', this.setUser.bind(this))
     }
-    setUser(user, chatHistoryData) {
-        this.user = user
+    setUser(event) {
+        this.user = event.detail.key
         let collabthread = document.getElementById("collabthread");
         collabthread.innerHTML = ''
         chatHistoryData.history.forEach( dialog => {
@@ -98,13 +100,13 @@ export class chat extends component {
         collabthread.appendChild(newMessage);
         this.scrollDown();
     }
-    userIDSubmit(event) {
-        event.preventDefault();
-        //get by id userIDInput
-        this.userIDInput = document.getElementById("userIDInput");
-        this.setUser(this.userIDInput.value);
-        localStorage.setItem('user', this.userIDInput.value);
-        document.getElementById("userID").style.display = "none";
-        document.getElementById("chatBox").style.display = "block";
-    }
+    // userIDSubmit(event) {
+    //     event.preventDefault();
+    //     //get by id userIDInput
+    //     this.userIDInput = document.getElementById("userIDInput");
+    //     this.setUser(this.userIDInput.value);
+    //     localStorage.setItem('user', this.userIDInput.value);
+    //     document.getElementById("userID").style.display = "none";
+    //     document.getElementById("chatBox").style.display = "block";
+    // }
 }

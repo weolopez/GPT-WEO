@@ -12,7 +12,7 @@
     <h1>Test</h1>
     <label for="collection">Collection</label>
     <input type="text" id="collection">
-     
+
     <textarea id="data" style="width: 100%;height: 250px;">Test</textarea>
 
     <label for="name">Name</label>
@@ -52,100 +52,102 @@
         localStorage.setItem('openai_key', key)
     }
 </script>
-    <script type="module">
-        import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
-        import { Collection } from '/ai/collection/collection.js';
+<script type="module">
+    // import { getNames, getByName, get, post, put, remove } from '/ai/collection/doc.js';
+    import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
+    import { Collection } from '/ai/collection/collection.js';
 
-        let poster = (data) => {
-            console.log(data);
-            document.getElementById('data').value = JSON.stringify(data);
+    let poster = (data) => {
+        console.log(data);
+        document.getElementById('data').value = JSON.stringify(data);
+    }
+    let getInputData = () => {
+        let collectionName = document.getElementById('collection').value
+        let obj = document.getElementById('data').value
+        let collection = new Collection(collectionName, poster)
+        let id = document.getElementById('id').value;
+        try {
+            obj = JSON.parse(obj)
+        } catch (error) {
+            console.log(error);
         }
-        let getInputData = () => {
-            let collectionName = document.getElementById('collection').value
-            let obj = document.getElementById('data').value
-            let collection = new Collection(collectionName, poster)
-            let id = document.getElementById('id').value;
-            try {
-                obj = JSON.parse(obj)
-            } catch (error) {
-                console.log(error);
-            }
-            let name = document.getElementById('name').value;
-            return { collection, id, obj, name }
-        }
-            // let collection = new Collection('cms', poster)
+        let name = document.getElementById('name').value;
+        return { collection, id, obj, name, collectionName }
+    }
+    // let collection = new Collection('cms', poster)
 
-        window.get = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) get('cms', id).then(poster)
-            else collection.get(id)
-        }
+    window.get = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) get('cms', id).then(poster)
+        else collection.get(id)
+    }
 
-        window.post = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) post('cms', obj).then(poster)
-            else collection.add(obj)
-        }
+    window.post = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) post('cms', obj).then(poster)
+        else collection.add(obj)
+    }
 
-        window.put = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) put('cms', obj)
-                .then(poster)
-            else collection.update(obj)
-        }
-        window.upsert = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) upsert('cms', 'history', obj, true)
-                .then(poster)
-            else collection.upsert(obj, 'history')
-        }
-        window.remove = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) remove('cms', obj).then(poster)
-            else collection.remove(obj)
-        }
+    window.put = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) put('cms', obj)
+            .then(poster)
+        else collection.update(obj)
+    }
+    window.upsert = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) upsert('cms', 'history', obj, true)
+            .then(poster)
+        else collection.upsert(obj, 'history')
+    }
+    window.remove = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) remove('cms', obj).then(poster)
+        else collection.remove(obj)
+    }
 
-        window.getNames = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) getNames().then(poster)
-            else collection.getNames()
-        }
-        window.getByName = () => {
-            let { collection, id, obj, name } = getInputData()
-            if (!collection) getByName(name).then(poster)
-            else collection.getByName(name)
-        }
-    </script>
+    window.getNames = () => {
+        let { collection, id, obj, name, collectionName } = getInputData()
+        if (!collection) getNames(collectionName).then(poster)
+        else collection.getNames()
+    }
+    window.getByName = () => {
+        let { collection, id, obj, name } = getInputData()
+        if (!collection) getByName(name).then(poster)
+        else collection.getByName(name)
+    }
+</script>
 
-    <script type="module">
-        import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
-        import { testAI, weoai } from '/ai/ai/weo.js';
-        import { Completion } from '/ai/ai/completion.js';
+<script type="module">
+    import { getNames, getByName, get, post, put, remove } from '/ai/collection/document.js';
+    import { testAI, weoai } from '/ai/ai/weo.js';
+    import { Completion } from '/ai/ai/completion.js';
 
-        let present = (data) => {
-            data = data.history.completion.choices[0].text
-            console.log(data);
-            if (typeof data === 'string') 
-                document.getElementById('data').value = data;
-            else document.getElementById('data').value = JSON.stringify(data,2,2);
-        }
-        
-        window.testAI = () => {
-            let c = new Completion()
-            c.test().then( result => {
-                //loop through results and append textarea with id=data
-                let data = document.getElementById('data')
-                for (let i = 0; i < result.length; i++) {
-                    data.value += '\nChapter' +
+    let present = (data) => {
+        data = data.history.completion.choices[0].text
+        console.log(data);
+        if (typeof data === 'string')
+            document.getElementById('data').value = data;
+        else document.getElementById('data').value = JSON.stringify(data, 2, 2);
+    }
+
+    window.testAI = () => {
+        let c = new Completion()
+        c.test().then(result => {
+            //loop through results and append textarea with id=data
+            let data = document.getElementById('data')
+            for (let i = 0; i < result.length; i++) {
+                data.value += '\nChapter' +
                     result[i].count + '\n' +
                     result[i].text
-                }
+            }
 
-                
-            })
-        }
-        window.weoai = () => {
-            weoai(document.getElementById('data').value, 'weolopez').then(present)
-        } 
+
+        })
+    }
+    window.weoai = () => {
+        weoai(document.getElementById('data').value, 'weolopez').then(present)
+    } 
 </script>
+
 </html>
