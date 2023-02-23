@@ -15,9 +15,9 @@ const config= {
 
   export async function getCompletion(prompt: any, config?: any) {
     // config.prompt = prompt
-    console.log(`\n\n#####config##${prompt}##\n\n\n`)
-    console.dir(config)
-    console.log('\n\n#####config####\n\n\n')
+    // console.log(`\n\n#####config##${prompt}##\n\n\n`)
+    // console.dir(config)
+    // console.log('\n\n#####config####\n\n\n')
     return await openai.createCompletion(config).then((completion: { data: any; }) => {
         const defaultJSON = {
             history: {
@@ -25,9 +25,9 @@ const config= {
               config
             }
           }
-          console.log('\n\n#####defaultJSON####\n\n\n')
-          console.dir(defaultJSON)
-          console.log('\n\n#####defaultJSON####\n\n\n')
+          // console.log('\n\n#####defaultJSON####\n\n\n')
+          // console.dir(defaultJSON)
+          // console.log('\n\n#####defaultJSON####\n\n\n')
 
         return defaultJSON
       }).catch((err: any) => {

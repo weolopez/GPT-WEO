@@ -30,11 +30,11 @@ router.post('/', async function (req, res, next) {
   defaultJSON.history.from = from
   defaultJSON.name = from
 
-  // upsert('histories', 'history', defaultJSON).then((result: any) => {
-  //   console.log(result)
-  // }).catch((err: any) => {
-  //   console.log(err)
-  // })
+  upsert('histories', 'history', defaultJSON).then((result: any) => {
+    console.log('SAVED HISTORY: ', result)
+  }).catch((err: any) => {
+    console.log('ERROR SAVING HISTORY: ', err)
+  })
 
   res.send(defaultJSON);
 
