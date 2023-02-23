@@ -132,18 +132,7 @@
     }
 
     window.testAI = () => {
-        let c = new Completion()
-        c.test().then(result => {
-            //loop through results and append textarea with id=data
-            let data = document.getElementById('data')
-            for (let i = 0; i < result.length; i++) {
-                data.value += '\nChapter' +
-                    result[i].count + '\n' +
-                    result[i].text
-            }
-
-
-        })
+        testAI()
     }
     window.weoai = () => {
         weoai(document.getElementById('data').value, 'weolopez').then(present)

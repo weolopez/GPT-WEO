@@ -1,6 +1,7 @@
 import { component } from '/ai/cms/component/component.js'
 import { html } from '/ai/cms/chat/html.js'
 import { weoai } from '/ai/ai/weo.js';
+import { getByName } from '/ai/collection/document.js'
 
 export class chat extends component {
     constructor(element, cms, callback) {
@@ -27,18 +28,25 @@ export class chat extends component {
 
         document.addEventListener('persona', this.setUser.bind(this))
     }
-    setUser(event) {
+    async setUser(event) {
         this.user = event.detail.key
         let collabthread = document.getElementById("collabthread");
         collabthread.innerHTML = ''
-        chatHistoryData.history.forEach( dialog => {
+        //get chat history for user
+        this.currentUserHistory = await getByName('histories', this.user);
+        //filter out this.currentUserHistory.history array to only include chatHistory that has a completion object
+        let chatHistory = this.currentUserHistory.history.filter( (item) => {
+            return item.completion
+        })
+        //loop through chatHistory array and add each message to the collabthread
+        chatHistory.forEach( (dialog) => {
             let ai = dialog.completion.choices[0].text
             let me = dialog.config.prompt
             let dateMade = new Date(dialog.completion.created*1000).toISOString()
             this.addMessage(me, 'out', dateMade)
             this.addMessage(ai, 'in', dateMade)
-        })
 
+        })
     }
     keypress (event) {
         //check if enter key is pressed using event key code
