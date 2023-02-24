@@ -8,9 +8,7 @@ const router = express.Router();
 router.get('/', async function (req, res, next) {
 
   const text = req.query.text;
-
   const pineconeAPIKey = process.env.PINECONE_API_KEY
-
   const completion = await getCompletion(text)// .then((completion: any) => {
   res.send(completion);
 
@@ -29,6 +27,8 @@ router.post('/', async function (req, res, next) {
   const defaultJSON: any = await getCompletion(text, config) // .then((defaultJSON: any) => {
   defaultJSON.history.from = from
   defaultJSON.name = from
+
+
 
   upsert('histories', 'history', defaultJSON).then((result: any) => {
     console.log('SAVED HISTORY: ', result)
