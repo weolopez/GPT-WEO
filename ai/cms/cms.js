@@ -28,6 +28,15 @@ export class CMS {
         window.addEventListener('hashchange', function () {
             this.setHash()
         }.bind(this))
+        window.triggerEvent = (event, data) => {
+            this.triggerEvent(event, data)
+        }
+    }
+
+    triggerEvent(event_name='ComponentEvent',component) {
+        const event = new CustomEvent(event_name, 
+            { detail: component });
+        document.dispatchEvent(event);
     }
     setHash() {
         this.hash = window.location.href.split('#')[1]

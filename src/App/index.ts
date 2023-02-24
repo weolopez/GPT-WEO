@@ -16,7 +16,6 @@ import { Schema, model, connect } from 'mongoose';
 // 1st party dependencies
 // let configData = require("./config/connection");
 import { getConnectionInfo } from "../config/connection";
-
 // const indexRouter = require("../routes/index");
 import indexRouter from "../routes/index";
 import weoRouter from "../routes/weo";
@@ -30,7 +29,7 @@ export async function getApp() {
 
   const app = express();
 
-
+  app.use(express.json({limit: '50mb'}));
   app.use(favicon(root+'/ai/favicon.svg'))
   const port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);

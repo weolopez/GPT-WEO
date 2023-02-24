@@ -42,11 +42,9 @@ export class promptarea extends component {
 
         let copyButton = document.getElementById('copy')
         copyButton.addEventListener('click', this.copy.bind(this))
-
-        document.addEventListener('submit', this.submit.bind(this), false);
+        document.addEventListener('SubmitEvent', this.submit.bind(this))
     }
-    
-    submit() {
+    submit(event) {
         let prompt = clipboard.value
         let size = this.mediaType.tokens
         if (size < 500) {
