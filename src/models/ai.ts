@@ -25,10 +25,6 @@ const config= {
               config
             }
           }
-          // console.log('\n\n#####defaultJSON####\n\n\n')
-          // console.dir(defaultJSON)
-          // console.log('\n\n#####defaultJSON####\n\n\n')
-
         return defaultJSON
       }).catch((err: any) => {
         console.log(err);

@@ -33,6 +33,7 @@ export class chat extends component {
 
     async setUser(event) {
         this.user = event.detail.key
+        this.setUserName()
     }
     async setUserName() {
         let collabthread = document.getElementById("collabthread");
