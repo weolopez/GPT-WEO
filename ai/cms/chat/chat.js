@@ -1,6 +1,7 @@
 import { component } from '/ai/cms/component/component.js'
 import { html } from '/ai/cms/chat/html.js'
 import { weoai } from '/ai/ai/weo.js';
+import { getByName, put } from '/ai/collection/document.js'
 
 export class chat extends component {
     constructor(element, cms, callback) {
@@ -8,7 +9,8 @@ export class chat extends component {
         this.element.innerHTML = html
 
         this.user = localStorage.getItem('user')
-     
+        this.setUserName(this.user)
+        //TODO setPrompt to select this.user
 
         // get element with id="myInput" and caputure keypress event
         this.input = document.getElementById("chatInput");
@@ -24,19 +26,29 @@ export class chat extends component {
             return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
         }
 
+
+        document.addEventListener('persona', this.setUser.bind(this))
+        document.addEventListener('DeleteMessage', this.deleteMessage.bind(this))
     }
-    setUser(user, chatHistoryData) {
-        this.user = user
+
+    async setUser(event) {
+        this.user = event.detail.key
+    }
+    async setUserName() {
         let collabthread = document.getElementById("collabthread");
         collabthread.innerHTML = ''
-        chatHistoryData.history.forEach( dialog => {
+        //get chat history for user
+        this.currentUserHistory = await getByName('histories', this.user);
+
+        //loop through chatHistory array and add each message to the collabthread
+        this.currentUserHistory.history.forEach( (dialog, index) => {
+            if (!dialog.completion) return
             let ai = dialog.completion.choices[0].text
             let me = dialog.config.prompt
             let dateMade = new Date(dialog.completion.created*1000).toISOString()
-            this.addMessage(me, 'out', dateMade)
-            this.addMessage(ai, 'in', dateMade)
+            this.addMessage(me, 'out', dateMade, index)
+            this.addMessage(ai, 'in', dateMade, index)
         })
-
     }
     keypress (event) {
         //check if enter key is pressed using event key code
@@ -77,7 +89,8 @@ export class chat extends component {
     randomDate(start, end) {
         return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
     }
-    addMessage(txt, direction, dateMade) {
+    addMessage(txt, direction, dateMade, index) {
+        if (txt.length < 1) return;
         //convert dateMade in epoc format to ISO string format
         let date = dateMade || new Date().toISOString();
         let message = ` <div class="message" >
@@ -88,6 +101,7 @@ export class chat extends component {
                                 white-space: -o-pre-wrap;    /* Opera 7 */
                                 word-wrap: break-word; ">${txt.trim()}</pre>
                                 <date><b> ${date} </b> </date>
+                                <button id="DeleteMessage" onclick="triggerEvent('DeleteMessage', '${index},${direction}')" class="deleteButton fas fa-trash-alt"></button>
                             </div>
                         </div>
         `
@@ -98,13 +112,19 @@ export class chat extends component {
         collabthread.appendChild(newMessage);
         this.scrollDown();
     }
-    userIDSubmit(event) {
-        event.preventDefault();
-        //get by id userIDInput
-        this.userIDInput = document.getElementById("userIDInput");
-        this.setUser(this.userIDInput.value);
-        localStorage.setItem('user', this.userIDInput.value);
-        document.getElementById("userID").style.display = "none";
-        document.getElementById("chatBox").style.display = "block";
+    async deleteMessage(event) {
+        let m = event.detail;
+        // m is comma separated string of index and direction
+        let index = m.split(',')[0]
+        let direction = m.split(',')[1]
+        if (direction === 'in') delete this.currentUserHistory.history[index].completion
+        if (direction === 'out') delete this.currentUserHistory.history[index].config
+        // //update this.currentUserHistory in database
+        let resp = await put('histories',this.currentUserHistory)
+        console.log(resp);
+        this.setUserName()
+        //find element containing the text data
+
+        // message.remove()
     }
 }

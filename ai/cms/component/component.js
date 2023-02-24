@@ -15,15 +15,11 @@ export class component {
             div.innerHTML = html
             element.appendChild(div)
         }
-        document.addEventListener('ComponentEvent', this.eventListener.bind(this), false);
     }
     triggerEvent(event_name='ComponentEvent',component) {
         const event = new CustomEvent(event_name, 
             { detail: component });
         document.dispatchEvent(event);
-    }
-    eventListener(e) {
-        // console.log('eventListener', e)
     }
     setHash(hash) {
         if (this.currentHash === hash) return

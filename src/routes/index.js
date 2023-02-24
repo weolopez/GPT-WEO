@@ -29,7 +29,8 @@ router.get('/summarize', function (req, res, next) {
 
   //process.env.OPENAI_API_KEY
   const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY,
+    pineconeAPIKey: process.env.PINECONE_API_KEY
   });
 
   const openai = new OpenAIApi(configuration);

@@ -294,6 +294,15 @@ export const html=` <style>
     width: 100vw;
     height: 56px;
   }
+  .deleteButton {
+    position: absolute;
+    background-color: transparent;
+    border: none;
+    top: 0;
+    margin: 14px;
+    right: 0;
+    color: white;
+  }
 </style>
 <div id="userID" style="display:none">
     <input id="userIDInput" type="text" placeholder="Your name"/>

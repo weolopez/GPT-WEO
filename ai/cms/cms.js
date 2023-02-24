@@ -28,6 +28,15 @@ export class CMS {
         window.addEventListener('hashchange', function () {
             this.setHash()
         }.bind(this))
+        window.triggerEvent = (event, data) => {
+            this.triggerEvent(event, data)
+        }
+    }
+
+    triggerEvent(event_name='ComponentEvent',component) {
+        const event = new CustomEvent(event_name, 
+            { detail: component });
+        document.dispatchEvent(event);
     }
     setHash() {
         this.hash = window.location.href.split('#')[1]
@@ -47,6 +56,7 @@ export class CMS {
 
         let data = await this.cmsCollection.getByName(this.page.meta.id)
         if (data && Object.keys(data).length > 0 && data.constructor === Object) this.page.data = data
+        else this.page.data = {}
 
         //get all the elements with the cms class to create objects
         this.page.elements = document.getElementsByClassName('cms')
@@ -125,17 +135,12 @@ export class CMS {
     }
     async save() {
         this.page.data.name = this.page.meta.id
-        let method = (this.page.data._id) ? 'PUT' : 'POST'
-        return await fetch(`/crud/cms`, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.page.data)
-        }).then(response => response.json()).catch(() => {
-            console.log("error");
-        }).then((data) => {
-            // sessionStorage.setItem(data.name, JSON.stringify(data))
-            return data
-        })
+        if (this.page.data._id) {
+            this.cmsCollection.update(this.page.data)
+
+        } else {
+            this.cmsCollection.add(this.page.data)
+        }
     }
 
     loadComponentsFromCMS() {
