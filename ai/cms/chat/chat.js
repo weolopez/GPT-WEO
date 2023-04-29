@@ -45,6 +45,7 @@ export class chat extends component {
         this.currentUserHistory.history.forEach( (dialog, index) => {
             if (!dialog.completion) return
             let ai = dialog.completion.choices[0].text
+            console.log(dialog.config)
             let me = dialog.config.prompt
             let dateMade = new Date(dialog.completion.created*1000).toISOString()
             this.addMessage(me, 'out', dateMade, index)
@@ -72,7 +73,8 @@ export class chat extends component {
     getResponse(txt) {
 
         weoai(txt, this.user, 280).then( (data) => {
-            data = data.history.completion.choices[0].text
+            console.dir(data)
+            // data = data.history.completion.content
             console.log(data);
             if (typeof data === 'string') {
                 //remove last child of collabthread
