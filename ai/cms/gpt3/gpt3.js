@@ -1,4 +1,4 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 import { Completion } from '/ai/ai/completion.js'
 
 const html =`
@@ -9,7 +9,7 @@ padding: 20px;
 width: 100%;
 "></textarea>
 `
-export class gpt3 extends Component {
+export class gpt3 extends component {
     completion
     constructor(element, cms, callback) {
         super(element, cms, callback)
@@ -18,15 +18,33 @@ export class gpt3 extends Component {
         this.completion = new Completion()
         this.setCallback(callback)
     }
+    callback(data) {
+        super.callback(data)
+    }
+
+    triggerEvent(isComplete, count) {
+        const event = new CustomEvent('PROGRESS_EVENT', 
+            { detail: {isComplete: isComplete, count: count} });
+        document.dispatchEvent(event);
+    }
     setCallback(callback) {
         this.completion.addCallback( (data) => {
             //get element by id = summary and append the text
-            if (data.finish_reason) console.log(data.finish_reason)
+            if (data.finish_reason) {
+                console.log(data.finish_reason)
+                this.triggerEvent(false) 
+                window.location.hash = '#Completion'
+                if (callback) callback(data.finish_reason)
+            }
             document.getElementById('gptSummary').value += data.text
             if (callback) callback(data)
         })
     }
+    setSummary(summary) {
+        document.getElementById('gptSummary').value = summary
+    }
     submit(prompt, size) {
+        this.triggerEvent(true)
         this.completion.get(prompt, size)
     }
 }

@@ -53,8 +53,6 @@ export class Collection {
     async getByName(name) {
         return await getByName(this.collection, name).then(data => {
             return data
-        }).catch(err => {
-            console.error(err)
         })
     }
 

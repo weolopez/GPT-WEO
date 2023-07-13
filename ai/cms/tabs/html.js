@@ -1,6 +1,9 @@
 export const html = `
 <ul class="nav nav-tabs">
 </ul>
+<style>
+
+</style>
 `
 
 export const activeTab = `

@@ -1,6 +1,6 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 
-export class tweet extends Component {
+export class tweet extends component {
  static html = `
 <style>
 @font-face {

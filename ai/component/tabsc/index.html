@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" style="overflow: hidden;">
+
+<head>
+	<meta name="version" content="1.0.0">
+	<meta name="id" content="wiki">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" type="image/svg+xml" href="/ai/favicon.svg">
+	<title>component</title>
+	<style>
+		label {
+			display: block;
+			margin-bottom: 1rem;
+		}
+
+		h1 {
+			margin: 0;
+		}
+
+		tabs-c {
+			--tab-gap: 1rem;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- <label>Direction: <button id="direction" onclick="changeDirection()">Row</button></label> -->
+	
+
+
+<button id="add-tab">Add Tab</button>
+</body>
+
+<script type="module">
+	import { CMS } from '/ai/cms/cms.js'
+
+	let cms = new CMS()
+	await cms.initComponents()
+
+	const addTabButton = document.querySelector("#add-tab");
+
+
+// const dirButton = document.querySelector("#direction");
+// dirButton.addEventListener("click", changeDirection)
+function changeDirection() {
+	const dirButton = document.querySelector("#direction");
+	//if text of button is row, change to column
+	if (dirButton.innerText == "Row") {
+		dirButton.innerText = "Column";
+	} else {
+		dirButton.innerText = "Row";
+	}
+};
+
+</script>
+
+</html>

@@ -1,6 +1,6 @@
-import { Component } from '/ai/cms/component.js'
+import { component } from '/ai/cms/component/component.js'
 
-export class radio extends Component {
+export class radio extends component {
     constructor(element, cms, callback) {
         super(element, cms, callback)
         if (cms.page.data[this.id]) {

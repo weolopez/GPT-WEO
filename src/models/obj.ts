@@ -31,6 +31,7 @@ export async function upsert(collection: string, arrName: string, data: any) {
         return post(collection, data);
     }
 }
+// export async function pull(collection, )
 export async function remove(collection: string, id: string) {
     return  await getModel(collection).deleteOne({_id:id}).exec()
         .then((obj: any) => {return obj} )
