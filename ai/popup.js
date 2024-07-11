@@ -1,5 +1,6 @@
    // Select location value 
 
+   console.log("options.js loaded")
 function DOMtoString(selector) {
   if (selector) {
     selector = document.querySelector(selector);

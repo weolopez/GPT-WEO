@@ -1,98 +1,78 @@
 
-//https://groups.google.com/a/chromium.org/g/chromium-extensions/c/InWfQ2fYiu8
+chrome.runtime.onInstalled.addListener(() => {
 
+  var contextMenuItem = {
+    "id": "aiContextMenu",
+    "title": "AI v2",
+    "contexts": ["all"]
+  };
 
+  chrome.contextMenus.create(contextMenuItem);
 
-//Open a new tab going to chat.openai.com when the browser action is clicked.
-/**
-* Gets the HTML of the user's selection
-*/
-// function getSelectionHTML() {
-//   var userSelection;
-//   if (window.getSelection) {
-//     // W3C Ranges
-//     userSelection = window.getSelection();
-//     // Get the range:
-//     if (userSelection.getRangeAt)
-//       var range = userSelection.getRangeAt(0);
-//     else {
-//       var range = document.createRange();
-//       range.setStart(userSelection.anchorNode, userSelection.anchorOffset);
-//       range.setEnd(userSelection.focusNode, userSelection.focusOffset);
-//     }
-//     // And the HTML:
-//     var clonedSelection = range.cloneContents();
-//     var div = document.createElement('div');
-//     div.appendChild(clonedSelection);
-//     return div.innerHTML;
-//   } else if (document.selection) {
-//     // Explorer selection, return the HTML
-//     userSelection = document.selection.createRange();
-//     return userSelection.htmlText;
-//   } else {
-//     return '';
-//   }
-// }
+  chrome.contextMenus.create({
+    title: "Summarize",
+    parentId: "aiContextMenu",
+    id: "summarize",
+    contexts: ["all"]
+  });
 
+  chrome.contextMenus.create({
+    id: "showSelectedText",
+    title: "Query",
+    parentId: "aiContextMenu",
+    contexts: ["selection"]
+  });
 
-// document.addEventListener('mouseup', function (event) {
-//   var sel = window.getSelection().toString();
-
-//   console.error(sel)
-//   if (sel.length)
-//     chrome.extension.sendRequest({ 'message': 'setText', 'data': sel }, function (response) { })
-// })
-
-
+});
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  chrome.tabs.sendMessage(tab.id, "getClickedEl", { frameId: info.frameId }, text => {
+
+  if (info.menuItemId === "summarize") {
+
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: showDialog,
+      args: [info.selectionText]
+    });
+  }
+  if (info.menuItemId === "showSelectedText") {
     chrome.windows.create({
-      url : "http://localhost:3000/ai?text=" + text,
-      focused : true,
-      type : "popup"
+      url: "http://localhost:8080/GenContext?text=" + info.selectionText,
+      type: "popup",
+      width: 900,
+      height: 600
+    });
+  }
+});
+
+function showDialog(selectedText) {
+  const dialog = document.createElement('dialog');
+  question = "Summarize: " + selectedText;
+  fetch("http://localhost:8080/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question: question,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      dialog.textContent = data.Response;
+
+      document.body.appendChild(dialog);
+      dialog.showModal();
+
+      dialog.addEventListener('click', () => {
+        dialog.close();
+        dialog.remove();
+      });
+      //toggle details open
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
 
-  });
-});
 
-
-var contextMenuItem = {
-  "id": "addRecipe",
-  "title": "AI v2",
-  "contexts": ["all"]
-};
-
-chrome.contextMenus.create(contextMenuItem);
-
-chrome.contextMenus.create({
-  title: "Summarize",
-  parentId: "addRecipe",
-  id: "name",
-  contexts: ["all"],
-}, (i, t) => {
-  // t.copy()
-  console.dir("LOADING...")
-  // chrome.extension.getBackgroundPage().console.log('foo');
-});
-
-chrome.contextMenus.create({
-  title: "Generate",
-  parentId: "addRecipe",
-  id: "list",
-  contexts: ["all"]
-});
-
-// chrome.contextMenus.create({
-//   title: "Add ingredients",
-//   parentId: "addRecipe",
-//   id: "ingredients",
-//   contexts:["selection"]
-// });
-
-// chrome.contextMenus.create({
-//   title: "Add cooking steps",
-//   parentId: "addRecipe",
-//   id: "steps",
-//   contexts:["selection"]
-// });
+}

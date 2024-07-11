@@ -1,4 +1,5 @@
 // Select location value 
+console.log("options.js loaded")
 $(function(){
 
    // firts update ui-limit from storage
